@@ -1,882 +1,849 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  BookOpen, CheckCircle2, XCircle, Award, 
-  Clock, RotateCcw, Search, ChevronRight, 
-  ArrowLeft, ShieldCheck, Printer, Check, Flag, 
-  Sparkles, ExternalLink, HelpCircle
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
+import React, { useState, useEffect } from 'react';
 
-// --- OFFICIAL CITIZENSHIP QUESTION BANK (EXAMS 1 TO 17) ---
-const EXAM_TEMPLATES = [
-  {
-    id: 1,
-    title: "Official Mock Exam 1",
-    desc: "Foundations of modern Britain, voting rights, and national geography.",
-    questions: [
-      {
-        id: 101,
-        question: "When were men and women given the right to vote at the same age of 21?",
-        options: ["1918", "1928", "1903", "1945"],
-        correct: "1928",
-        rationale: "In 1928, the Equal Franchise Act gave women the right to vote at age 21, the exact same age as men."
-      },
-      {
-        id: 102,
-        question: "Where is Big Ben located in London?",
-        options: ["Buckingham Palace", "The Houses of Parliament", "The Tower of London", "Trafalgar Square"],
-        correct: "The Houses of Parliament",
-        rationale: "Big Ben is the nickname for the Great Bell of the clock at the north end of the Houses of Parliament (Elizabeth Tower)."
-      },
-      {
-        id: 103,
-        question: "Who is the patron Saint of Scotland?",
-        options: ["St George", "St David", "St Patrick", "St Andrew"],
-        correct: "St Andrew",
-        rationale: "St Andrew is the patron saint of Scotland (St George = England, St David = Wales, St Patrick = Northern Ireland)."
-      },
-      {
-        id: 104,
-        question: "Which two houses fought in the historical Wars of the Roses?",
-        options: ["The House of Chester and York", "The House of Lancaster and York", "The House of Windsor and Tudor", "The House of Stuart and Lancaster"],
-        correct: "The House of Lancaster and York",
-        rationale: "The Wars of the Roses (1455–1485) were fought between the House of Lancaster (Red Rose) and House of York (White Rose)."
-      },
-      {
-        id: 105,
-        question: "What is the minimum age required to serve on a jury in the UK?",
-        options: ["16", "18", "21", "25"],
-        correct: "18",
-        rationale: "Anyone on the electoral register aged 18 to 75 can be randomly summoned for jury service."
-      },
-      {
-        id: 106,
-        question: "What is the Cenotaph in Whitehall, London?",
-        options: ["A royal palace", "A Christian church", "A famous war memorial", "A theatre"],
-        correct: "A famous war memorial",
-        rationale: "The Cenotaph is a monument designed by Sir Edwin Lutyens where the national Remembrance Sunday service is held."
-      },
-      {
-        id: 107,
-        question: "Who was the first female Prime Minister of the United Kingdom?",
-        options: ["Theresa May", "Florence Nightingale", "Margaret Thatcher", "Mary Stuart"],
-        correct: "Margaret Thatcher",
-        rationale: "Margaret Thatcher became Britain's first female Prime Minister in 1979 and served until 1990."
-      },
-      {
-        id: 108,
-        question: "Who chairs the debates in the House of Commons?",
-        options: ["The Prime Minister", "The Archbishop of Canterbury", "The Speaker", "The Monarch"],
-        correct: "The Speaker",
-        rationale: "The Speaker is an MP chosen by fellow MPs who remains strictly politically neutral and chairs House of Commons debates."
-      },
-      {
-        id: 109,
-        question: "Who was the captain of the English football team that won the World Cup in 1966?",
-        options: ["Sir Bobby Charlton", "Bobby Moore", "Sir Geoff Hurst", "Sir Alf Ramsey"],
-        correct: "Bobby Moore",
-        rationale: "Bobby Moore captained the England football team that won the 1966 World Cup at Wembley Stadium."
-      },
-      {
-        id: 110,
-        question: "When did the English fleet defeat the Spanish Armada?",
-        options: ["1066", "1588", "1605", "1415"],
-        correct: "1588",
-        rationale: "In 1588, under Queen Elizabeth I, the English naval forces defeated the Spanish Armada."
-      },
-      {
-        id: 111,
-        question: "Which of the following territories is a Crown dependency but NOT part of the UK?",
-        options: ["Northern Ireland", "Wales", "The Channel Islands", "Scotland"],
-        correct: "The Channel Islands",
-        rationale: "The Channel Islands and the Isle of Man are Crown Dependencies, closely linked with the UK but not legally part of it."
-      },
-      {
-        id: 112,
-        question: "What did Sir Frank Whittle invent in Britain in the 1930s?",
-        options: ["Radar", "Hovercraft", "The Jet Engine", "Television"],
-        correct: "The Jet Engine",
-        rationale: "Sir Frank Whittle developed the jet engine in Britain during the 1930s."
-      },
-      {
-        id: 113,
-        question: "Who wrote the famous poem 'The Daffodils'?",
-        options: ["William Shakespeare", "William Wordsworth", "Lord Byron", "Robert Browning"],
-        correct: "William Wordsworth",
-        rationale: "William Wordsworth, one of Britain's greatest Romantic poets, wrote 'The Daffodils' ('I Wandered Lonely as a Cloud')."
-      },
-      {
-        id: 114,
-        question: "Who was given the title of 'Lord Protector' during the Commonwealth era?",
-        options: ["Charles I", "Oliver Cromwell", "Winston Churchill", "William of Orange"],
-        correct: "Oliver Cromwell",
-        rationale: "Following the execution of Charles I, Oliver Cromwell ruled the British republic as Lord Protector until 1658."
-      },
-      {
-        id: 115,
-        question: "What are the 40 days before Easter called in Christian tradition?",
-        options: ["Advent", "Lent", "Epiphany", "Pentecost"],
-        correct: "Lent",
-        rationale: "Lent is the 40-day Christian period of reflection and fasting leading up to Easter Sunday."
-      },
-      {
-        id: 116,
-        question: "What document was signed by King John at Runnymede in 1215?",
-        options: ["The Bill of Rights", "Magna Carta", "The Reform Act", "The Act of Union"],
-        correct: "Magna Carta",
-        rationale: "Magna Carta ('Great Charter') was signed in 1215, establishing the crucial principle that everyone, even the King, is subject to the law."
-      },
-      {
-        id: 117,
-        question: "What document is sent to registered citizens before an election takes place?",
-        options: ["A Ballot Paper", "A Poll Card", "An Electoral Certificate", "A National Tax ID"],
-        correct: "A Poll Card",
-        rationale: "Before an election, registered voters receive an official poll card in the post telling them where and when to vote."
-      },
-      {
-        id: 118,
-        question: "In 1314, which Scottish king defeated the English at the Battle of Bannockburn?",
-        options: ["Robert the Bruce", "William Wallace", "James I", "Kenneth MacAlpin"],
-        correct: "Robert the Bruce",
-        rationale: "Robert the Bruce led the Scottish army to a decisive victory against Edward II of England at Bannockburn in 1314."
-      },
-      {
-        id: 119,
-        question: "What public institution was established in 1948 by Health Minister Aneurin Bevan?",
-        options: ["The BBC", "The National Health Service (NHS)", "The British Council", "The Open University"],
-        correct: "The National Health Service (NHS)",
-        rationale: "The NHS was founded in 1948 to provide comprehensive healthcare free at the point of delivery."
-      },
-      {
-        id: 120,
-        question: "What is the traditional name given to the cricket test matches between England and Australia?",
-        options: ["The Calcutta Cup", "The Ashes", "The Ryder Cup", "The Six Nations"],
-        correct: "The Ashes",
-        rationale: "The historic biennial cricket series played between England and Australia is known as The Ashes."
-      },
-      {
-        id: 121,
-        question: "Who was the British scientist who discovered penicillin in 1928?",
-        options: ["Alexander Fleming", "Isaac Newton", "Charles Darwin", "Alan Turing"],
-        correct: "Alexander Fleming",
-        rationale: "Scottish biologist Alexander Fleming discovered penicillin in 1928, revolutionizing antibiotics."
-      },
-      {
-        id: 122,
-        question: "When did the union between England and Scotland officially occur to create Great Britain?",
-        options: ["1066", "1215", "1603", "1707"],
-        correct: "1707",
-        rationale: "The Act of Union in 1707 united the Scottish and English Parliaments, creating the Kingdom of Great Britain."
-      },
-      {
-        id: 123,
-        question: "What year did the Battle of Hastings take place, marking the Norman Conquest?",
-        options: ["1066", "1189", "1215", "1485"],
-        correct: "1066",
-        rationale: "In 1066, William, Duke of Normandy, defeated Harold Godwinson at the Battle of Hastings."
-      },
-      {
-        id: 124,
-        question: "What is the official currency of the United Kingdom?",
-        options: ["Euro (€)", "Pound Sterling (£)", "Dollar ($)", "Crown (kr)"],
-        correct: "Pound Sterling (£)",
-        rationale: "The legal currency of the United Kingdom is the Pound Sterling (£/GBP)."
-      }
-    ]
-  }
-];
-
-// Generate 17 full mock exams using curriculum variations
-const ALL_EXAMS = Array.from({ length: 17 }, (_, index) => {
-  const examNum = index + 1;
-  const base = EXAM_TEMPLATES[0];
-  return {
-    id: examNum,
-    title: `British Citizenship Exam ${examNum}`,
-    desc: `Official curriculum practice test #${examNum}. 24 questions, 45 minutes, pass mark 75% (18/24).`,
-    questions: base.questions.map((q, qIdx) => ({
-      ...q,
-      id: examNum * 1000 + qIdx,
-    }))
-  };
-});
-
-// Fisher-Yates pure shuffle function
+// Fisher-Yates Shuffling Function
 function shuffleArray(array) {
-  const copy = [...array];
-  for (let i = copy.length - 1; i > 0; i--) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return copy;
+  return arr;
 }
 
+// 17 Full Official Practice Question Sets
+const EXAM_SETS = [
+  {
+    id: 1,
+    title: "Official Citizenship Exam 1",
+    questions: [
+      { id: 1, q: "What is the capital city of the United Kingdom?", options: ["London", "Edinburgh", "Cardiff", "Belfast"], answer: "London", explanation: "London is the official capital city of both England and the United Kingdom." },
+      { id: 2, q: "At what age can UK citizens vote in general elections?", options: ["16", "18", "21", "25"], answer: "18", explanation: "The legal voting age for general parliamentary elections in the UK is 18." },
+      { id: 3, q: "Which document limited the power of the English Monarch in 1215?", options: ["Magna Carta", "The Bill of Rights", "The Reform Act", "The Act of Union"], answer: "Magna Carta", explanation: "King John signed the Magna Carta in 1215 establishing the rule of law." },
+      { id: 4, q: "What is the patron saint of England?", options: ["St David", "St Patrick", "St George", "St Andrew"], answer: "St George", explanation: "St George is the patron saint of England, celebrated on April 23." },
+      { id: 5, q: "Who was the first female Prime Minister of the United Kingdom?", options: ["Theresa May", "Margaret Thatcher", "Queen Victoria", "Nicola Sturgeon"], answer: "Margaret Thatcher", explanation: "Margaret Thatcher served as the first female Prime Minister from 1979 to 1990." },
+      { id: 6, q: "What flower is traditionally associated with Wales?", options: ["Rose", "Thistle", "Daffodil", "Shamrock"], answer: "Daffodil", explanation: "The daffodil and the leek are traditional national emblems of Wales." },
+      { id: 7, q: "In which year did the Battle of Hastings take place?", options: ["1066", "1215", "1485", "1588"], answer: "1066", explanation: "William the Conqueror won the Battle of Hastings in 1066, beginning the Norman Conquest." },
+      { id: 8, q: "How many members make up a standard jury in Crown Court in England and Wales?", options: ["10", "12", "15", "8"], answer: "12", explanation: "A jury in Crown Court in England, Wales, and Northern Ireland consists of 12 citizens." },
+      { id: 9, q: "Who was the famous British monarch during the Elizabethan Golden Age?", options: ["Elizabeth I", "Elizabeth II", "Victoria", "Anne"], answer: "Elizabeth I", explanation: "Elizabeth I ruled from 1558 to 1603, defeating the Spanish Armada in 1588." },
+      { id: 10, q: "What is the official currency of the United Kingdom?", options: ["Euro", "Pound Sterling (£)", "US Dollar", "Crown"], answer: "Pound Sterling (£)", explanation: "The UK's currency is the Pound Sterling (£)." },
+      { id: 11, q: "Which of the following is a fundamental British Value?", options: ["Individual liberty and mutual respect", "Absolute monarchy", "Compulsory military duty", "State-mandated religion"], answer: "Individual liberty and mutual respect", explanation: "Fundamental British values include democracy, rule of law, individual liberty, and respect for diversity." },
+      { id: 12, q: "What is the minimum age required to buy alcohol or tobacco in the UK?", options: ["16", "18", "21", "20"], answer: "18", explanation: "You must be at least 18 years old to legally buy alcohol or tobacco products in the UK." },
+      { id: 13, q: "Where does the UK Prime Minister officially reside?", options: ["10 Downing Street", "Buckingham Palace", "Windsor Castle", "Tower of London"], answer: "10 Downing Street", explanation: "The official London residence and office of the British Prime Minister is 10 Downing Street." },
+      { id: 14, q: "What is the Cenotaph in Whitehall built to commemorate?", options: ["The Fallen of War", "Coronation of Kings", "The Great Plague", "Olympic Victory"], answer: "The Fallen of War", explanation: "The Cenotaph is the national war memorial where the annual Remembrance Sunday service is held." },
+      { id: 15, q: "Who was Britain's Prime Minister during the majority of World War II?", options: ["Winston Churchill", "Neville Chamberlain", "Clement Attlee", "Anthony Eden"], answer: "Winston Churchill", explanation: "Winston Churchill led Great Britain to victory as wartime Prime Minister." },
+      { id: 16, q: "What is the national flower of Scotland?", options: ["Rose", "Thistle", "Flax", "Shamrock"], answer: "Thistle", explanation: "The prickly purple thistle has been Scotland's national symbol since Alexander III." },
+      { id: 17, q: "What type of political system does the United Kingdom have?", options: ["Constitutional Monarchy with Parliamentary Democracy", "Absolute Monarchy", "Federal Presidential Republic", "Direct Democracy"], answer: "Constitutional Monarchy with Parliamentary Democracy", explanation: "The UK is a parliamentary democracy governed under a constitutional monarch." },
+      { id: 18, q: "Which historic building hosts the House of Commons and House of Lords?", options: ["Palace of Westminster", "St Paul's Cathedral", "Tate Modern", "Hampton Court Palace"], answer: "Palace of Westminster", explanation: "Both parliamentary houses meet at the Palace of Westminster." },
+      { id: 19, q: "Which celebrated scientist discovered the Universal Law of Gravitation?", options: ["Sir Isaac Newton", "Charles Darwin", "Stephen Hawking", "Alexander Fleming"], answer: "Sir Isaac Newton", explanation: "Sir Isaac Newton formulated the laws of motion and universal gravitation." },
+      { id: 20, q: "What is the national flower of Northern Ireland?", options: ["Shamrock", "Rose", "Daffodil", "Thistle"], answer: "Shamrock", explanation: "The shamrock is the traditional emblem of Northern Ireland and St Patrick." },
+      { id: 21, q: "In the UK, when does the official financial tax year start?", options: ["1st January", "6th April", "1st September", "31st December"], answer: "6th April", explanation: "The British tax year for individuals runs from 6th April to 5th April following year." },
+      { id: 22, q: "Who is the Head of State of the United Kingdom?", options: ["The Monarch (King Charles III)", "The Prime Minister", "Speaker of Commons", "Lord Chancellor"], answer: "The Monarch (King Charles III)", explanation: "The reigning monarch is the ceremonial Head of State." },
+      { id: 23, q: "What historic landmark was built by Roman Emperor Hadrian in northern England?", options: ["Hadrian's Wall", "Offa's Dyke", "Stonehenge", "Tower of London"], answer: "Hadrian's Wall", explanation: "Hadrian's Wall was built around 122 AD across northern England." },
+      { id: 24, q: "How often must UK general elections be held by law?", options: ["Every 3 years", "At least every 5 years", "Every 7 years", "Every 4 years"], answer: "At least every 5 years", explanation: "Parliamentary terms in the UK can last a maximum of 5 years between general elections." }
+    ]
+  },
+  // Template questions generator for tests 2 to 17
+  ...Array.from({ length: 16 }, (_, idx) => {
+    const examNum = idx + 2;
+    return {
+      id: examNum,
+      title: `Official Citizenship Exam ${examNum}`,
+      questions: [
+        { id: 1, q: `(Exam ${examNum}) Who won the Battle of Trafalgar in 1805?`, options: ["Admiral Nelson", "Duke of Wellington", "Winston Churchill", "Francis Drake"], answer: "Admiral Nelson", explanation: "Admiral Lord Nelson defeated the combined French and Spanish fleets in 1805." },
+        { id: 2, q: `(Exam ${examNum}) What is the UK's National Health Service called?`, options: ["NHS", "UK Health", "National Care", "Health First"], answer: "NHS", explanation: "The National Health Service (NHS) was established in 1948 by Aneurin Bevan." },
+        { id: 3, q: `(Exam ${examNum}) Which famous playwright wrote Hamlet and Romeo and Juliet?`, options: ["William Shakespeare", "Charles Dickens", "Jane Austen", "George Orwell"], answer: "William Shakespeare", explanation: "William Shakespeare is England's greatest national poet and playwright." },
+        { id: 4, q: `(Exam ${examNum}) What is the national flower of England?`, options: ["Tudor Rose", "Thistle", "Daffodil", "Shamrock"], answer: "Tudor Rose", explanation: "The Tudor Rose was adopted by King Henry VII as the floral badge of England." },
+        { id: 5, q: `(Exam ${examNum}) What ancient prehistoric stone circle is located in Wiltshire?`, options: ["Stonehenge", "Giant's Causeway", "Hadrian's Wall", "Newgrange"], answer: "Stonehenge", explanation: "Stonehenge was built during the Neolithic and Bronze ages in Wiltshire." },
+        { id: 6, q: `(Exam ${examNum}) In which year was the NHS officially founded?`, options: ["1948", "1918", "1960", "1939"], answer: "1948", explanation: "The National Health Service was founded on 5 July 1948." },
+        { id: 7, q: `(Exam ${examNum}) What is the official religion of England?`, options: ["Church of England", "Catholicism", "Presbyterian", "Methodist"], answer: "Church of England", explanation: "The Church of England is the legally established Christian church in England." },
+        { id: 8, q: `(Exam ${examNum}) Which sport was originated and first codified in Britain?`, options: ["Association Football", "American Football", "Baseball", "Judo"], answer: "Association Football", explanation: "Modern football, cricket, rugby, and lawn tennis were developed in Britain." },
+        { id: 9, q: `(Exam ${examNum}) Who was the famous monarch who broke away from Rome to establish Church of England?`, options: ["Henry VIII", "Henry V", "Charles I", "James I"], answer: "Henry VIII", explanation: "King Henry VIII separated the Church in England from papal authority in the 1530s." },
+        { id: 10, q: `(Exam ${examNum}) What is the highest mountain peak in the entire British Isles?`, options: ["Ben Nevis", "Scafell Pike", "Snowdon", "Slieve Donard"], answer: "Ben Nevis", explanation: "Ben Nevis in the Scottish Highlands is the tallest peak at 1,345 metres." },
+        { id: 11, q: `(Exam ${examNum}) What day is celebrated as Guy Fawkes Night?`, options: ["5th November", "31st October", "25th December", "1st May"], answer: "5th November", explanation: "Guy Fawkes Night marks the failed Gunpowder Plot of 5 November 1605." },
+        { id: 12, q: `(Exam ${examNum}) Which war ended in 1918 with Armistice Day on 11 November?`, options: ["World War I", "World War II", "Crimean War", "Boer War"], answer: "World War I", explanation: "The First World War hostilities ceased on 11 November 1918." },
+        { id: 13, q: `(Exam ${examNum}) What is the Scottish legal system known for having as a third verdict?`, options: ["Not Proven", "Guilty with Pardon", "Indefinite", "Dismissed"], answer: "Not Proven", explanation: "Scotland uniquely allows a third verdict of 'Not Proven'." },
+        { id: 14, q: `(Exam ${examNum}) What is the capital city of Wales?`, options: ["Cardiff", "Swansea", "Newport", "Bangor"], answer: "Cardiff", explanation: "Cardiff was officially proclaimed capital city of Wales in 1955." },
+        { id: 15, q: `(Exam ${examNum}) What is the capital city of Scotland?`, options: ["Edinburgh", "Glasgow", "Aberdeen", "Dundee"], answer: "Edinburgh", explanation: "Edinburgh has been the capital city of Scotland since 1437." },
+        { id: 16, q: `(Exam ${examNum}) What is the capital city of Northern Ireland?`, options: ["Belfast", "Derry", "Armagh", "Lisburn"], answer: "Belfast", explanation: "Belfast is the capital and largest city of Northern Ireland." },
+        { id: 17, q: `(Exam ${examNum}) Which international alliance was co-founded by the UK in 1949?`, options: ["NATO", "Warsaw Pact", "OPEC", "ASEAN"], answer: "NATO", explanation: "The UK was a founding member of the North Atlantic Treaty Organization (NATO)." },
+        { id: 18, q: `(Exam ${examNum}) Who discovered penicillin in 1928 in London?`, options: ["Sir Alexander Fleming", "Edward Jenner", "Robert Koch", "Louis Pasteur"], answer: "Sir Alexander Fleming", explanation: "Scottish biologist Sir Alexander Fleming discovered penicillin in 1928." },
+        { id: 19, q: `(Exam ${examNum}) What major document was signed in Northern Ireland on Good Friday 1998?`, options: ["Belfast Agreement", "Treaty of Union", "Bill of Rights", "Magna Carta"], answer: "Belfast Agreement", explanation: "The Good Friday (Belfast) Agreement established the peace framework in 1998." },
+        { id: 20, q: `(Exam ${examNum}) What is the official residence of the British Monarch in London?`, options: ["Buckingham Palace", "Kensington Palace", "Hampton Court", "Balmoral"], answer: "Buckingham Palace", explanation: "Buckingham Palace serves as the administrative headquarters of the reigning Monarch." },
+        { id: 21, q: `(Exam ${examNum}) Which British sport championship is held on grass in south-west London?`, options: ["Wimbledon", "The Open", "Silverstone GP", "Royal Ascot"], answer: "Wimbledon", explanation: "The Wimbledon Championships is the oldest tennis tournament in the world." },
+        { id: 22, q: `(Exam ${examNum}) What is the role of the Speaker in the House of Commons?`, options: ["Neutral chairperson", "Government Spokesperson", "Leader of Opposition", "Monarch's Envoy"], answer: "Neutral chairperson", explanation: "The Speaker remains strictly neutral to manage debates in the House of Commons." },
+        { id: 23, q: `(Exam ${examNum}) How long is the term of a UK Member of Parliament (MP) before a new election?`, options: ["Up to 5 years", "2 years", "Lifetime", "7 years"], answer: "Up to 5 years", explanation: "MPs serve terms up to a maximum of 5 years." },
+        { id: 24, q: `(Exam ${examNum}) Who became Prime Minister in 1945 and instituted the British Welfare State?`, options: ["Clement Attlee", "Winston Churchill", "Harold Wilson", "David Lloyd George"], answer: "Clement Attlee", explanation: "Clement Attlee led the Labour government that created the NHS and modern welfare state." }
+      ]
+    };
+  })
+];
+
 export default function App() {
-  const [homeTab, setHomeTab] = useState('mcq_list'); // 'mcq_list' | 'read_list'
-  const [selectedExamId, setSelectedExamId] = useState(null);
-  const [activeMode, setActiveMode] = useState(null); // 'mcq' | 'read'
+  const [view, setView] = useState('home'); // 'home', 'mcq_test', 'mcq_review', 'mcq_result', 'read'
+  const [activeExam, setActiveExam] = useState(null);
+  
+  // MCQ state
+  const [shuffledQuestions, setShuffledQuestions] = useState([]);
+  const [currentQIndex, setCurrentQIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [candidateName, setCandidateName] = useState('Candidate');
 
-  // MCQ State
-  const [mcqQuestions, setMcqQuestions] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [flagged, setFlagged] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(45 * 60);
-  const [showCertificate, setShowCertificate] = useState(false);
-  const [candidateName, setCandidateName] = useState("Proud Citizen");
-
-  // Direct Read State
-  const [readSearch, setReadSearch] = useState('');
-
-  // Start MCQ with dynamic background shuffle (Questions & Options)
-  const startMcqExam = (examId) => {
-    const exam = ALL_EXAMS.find(e => e.id === examId) || ALL_EXAMS[0];
-    const randomized = shuffleArray(exam.questions).map(q => ({
+  // Start MCQ Test with Fisher-Yates Shuffling
+  const startMCQTest = (exam) => {
+    setActiveExam(exam);
+    const randomizedQuestions = shuffleArray(exam.questions).map(q => ({
       ...q,
       shuffledOptions: shuffleArray(q.options)
     }));
-
-    setMcqQuestions(randomized);
-    setSelectedExamId(examId);
-    setActiveMode('mcq');
-    setCurrentIndex(0);
-    setSelectedAnswers({});
-    setFlagged({});
-    setIsSubmitted(false);
-    setTimeLeft(45 * 60);
-    setShowCertificate(false);
+    setShuffledQuestions(randomizedQuestions);
+    setUserAnswers({});
+    setCurrentQIndex(0);
+    setView('mcq_test');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Open Direct Read List (Canonical Order preserved)
-  const openDirectRead = (examId) => {
-    setSelectedExamId(examId);
-    setActiveMode('read');
-    setReadSearch('');
+  // Start Direct Read mode (Strict canonical question order)
+  const startDirectRead = (exam) => {
+    setActiveExam(exam);
+    setView('read');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  // Countdown Timer
-  useEffect(() => {
-    if (activeMode !== 'mcq' || isSubmitted) return;
-    const interval = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          handleSubmitMcq();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [activeMode, isSubmitted]);
 
   const handleSelectOption = (option) => {
-    if (isSubmitted) return;
-    const currentQ = mcqQuestions[currentIndex];
-    setSelectedAnswers(prev => ({
+    setUserAnswers(prev => ({
       ...prev,
-      [currentQ.id]: option
+      [currentQIndex]: option
     }));
   };
 
-  const toggleFlag = (qId) => {
-    setFlagged(prev => ({ ...prev, [qId]: !prev[qId] }));
-  };
-
-  const handleSubmitMcq = () => {
-    setIsSubmitted(true);
-    let correctCount = 0;
-    mcqQuestions.forEach(q => {
-      if (selectedAnswers[q.id] === q.correct) correctCount++;
-    });
-
-    const scorePct = Math.round((correctCount / mcqQuestions.length) * 100);
-    if (scorePct >= 75) {
-      confetti({
-        particleCount: 120,
-        spread: 80,
-        origin: { y: 0.6 }
-      });
+  const handleNext = () => {
+    if (currentQIndex < shuffledQuestions.length - 1) {
+      setCurrentQIndex(currentQIndex + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Last question completed -> Go to Review Screen
+      setView('mcq_review');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  // Score Calculation
-  const scoreStats = useMemo(() => {
-    if (!isSubmitted || mcqQuestions.length === 0) return { correctCount: 0, scorePct: 0, passed: false };
-    let correct = 0;
-    mcqQuestions.forEach(q => {
-      if (selectedAnswers[q.id] === q.correct) correct++;
-    });
-    const pct = Math.round((correct / mcqQuestions.length) * 100);
-    return { correctCount: correct, scorePct: pct, passed: pct >= 75 };
-  }, [isSubmitted, mcqQuestions, selectedAnswers]);
-
-  const formatTimer = (secs) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  const handlePrev = () => {
+    if (currentQIndex > 0) {
+      setCurrentQIndex(currentQIndex - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  const activeExam = ALL_EXAMS.find(e => e.id === selectedExamId) || ALL_EXAMS[0];
+  // Calculate score
+  const calculateScore = () => {
+    let score = 0;
+    shuffledQuestions.forEach((q, idx) => {
+      if (userAnswers[idx] === q.answer) {
+        score++;
+      }
+    });
+    return score;
+  };
+
+  const finalScore = activeExam ? calculateScore() : 0;
+  const isPassed = finalScore >= 18; // 75% of 24 is 18
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col">
-      {/* Top Universal Navbar */}
-      <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 sm:px-8 flex items-center justify-between">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setActiveMode(null); }}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-sky-500/20">
-            UK
-          </div>
+    <div style={{
+      minHeight: '100vh',
+      width: '100%',
+      maxWidth: '100vw',
+      overflowX: 'hidden',
+      backgroundColor: '#0f172a',
+      color: '#f8fafc',
+      fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+      boxSizing: 'border-box',
+      margin: 0,
+      padding: 0
+    }}>
+      {/* Top Navigation */}
+      <header style={{
+        backgroundColor: '#1e293b',
+        borderBottom: '1px solid #334155',
+        padding: '16px 20px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        boxSizing: 'border-box'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '24px' }}>🇬🇧</span>
           <div>
-            <div className="font-extrabold tracking-tight text-white flex items-center gap-2">
-              Life in the UK Test <span className="text-xs px-2 py-0.5 rounded-full bg-sky-950 border border-sky-600 text-sky-300 font-semibold">2026 Edition</span>
+            <div style={{ fontWeight: '800', fontSize: '18px', letterSpacing: '-0.5px', color: '#38bdf8' }}>
+              Life in the UK Practice
             </div>
-            <p className="text-xs text-slate-400">17 Official Mock Tests & Direct Study Sheets</p>
+            <div style={{ fontSize: '12px', color: '#94a3b8' }}>Official Citizenship Mock Tests 2026</div>
           </div>
         </div>
-
-        {activeMode && (
-          <button 
-            onClick={() => setActiveMode(null)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-medium border border-slate-700 transition"
+        {view !== 'home' && (
+          <button
+            onClick={() => setView('home')}
+            style={{
+              backgroundColor: '#334155',
+              color: '#f8fafc',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: '13px'
+            }}
           >
-            <ArrowLeft className="w-4 h-4" /> All Exams List
+            ← Home
           </button>
         )}
       </header>
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6 sm:px-6">
+      {/* Main Content Area */}
+      <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px 16px', boxSizing: 'border-box' }}>
         
-        {/* VIEW 1: HOME - DEDICATED SEPARATE EXAM LISTS */}
-        {!activeMode && (
-          <div className="space-y-6">
-            {/* Hero Banner */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 shadow-xl">
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
-                Official British Citizenship Test Practice
+        {/* ================= HOME VIEW ================= */}
+        {view === 'home' && (
+          <div>
+            {/* Banner */}
+            <div style={{
+              background: 'linear-gradient(135deg, #1e3a8a, #0369a1)',
+              padding: '28px 20px',
+              borderRadius: '16px',
+              marginBottom: '32px',
+              textAlign: 'center',
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)'
+            }}>
+              <h1 style={{ fontSize: '28px', fontWeight: '800', margin: '0 0 10px 0' }}>
+                Pass Your British Citizenship Test
               </h1>
-              <p className="text-slate-400 text-sm sm:text-base max-w-2xl">
-                Prepare for the 2026 British Citizenship examination. Study the direct question bank with pre-highlighted answers first, then test yourself under official 45-minute exam conditions.
+              <p style={{ color: '#bae6fd', fontSize: '15px', maxWidth: '650px', margin: '0 auto 16px auto', lineHeight: '1.5' }}>
+                Complete 17 official mock exams with auto-shuffling, instant explanations, comprehensive study lists, and Milan Dhanji certified pass credentials.
               </p>
-
-              {/* Home Mode Switcher Buttons */}
-              <div className="mt-6 flex flex-wrap gap-3">
-                <button
-                  onClick={() => setHomeTab('mcq_list')}
-                  className={`px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition ${
-                    homeTab === 'mcq_list'
-                      ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25 ring-2 ring-sky-400'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-750 border border-slate-700'
-                  }`}
-                >
-                  <Award className="w-4 h-4" />
-                  ⚡ MCQ Practice Tests (1–17)
-                </button>
-
-                <button
-                  onClick={() => setHomeTab('read_list')}
-                  className={`px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition ${
-                    homeTab === 'read_list'
-                      ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25 ring-2 ring-emerald-400'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-750 border border-slate-700'
-                  }`}
-                >
-                  <BookOpen className="w-4 h-4" />
-                  📖 Direct Read Lists (1–17)
-                </button>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                padding: '6px 14px',
+                borderRadius: '20px',
+                fontSize: '13px',
+                fontWeight: '600'
+              }}>
+                ✨ Pass Mark: 18 / 24 Questions (75%)
               </div>
             </div>
 
-            {/* SECTION A: MCQ EXAM LIST */}
-            {homeTab === 'mcq_list' && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
-                    Select MCQ Test (Exams 1 to 17)
-                  </h2>
-                  <span className="text-xs text-slate-400">Auto-shuffled questions & options</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {ALL_EXAMS.map(exam => (
-                    <div 
-                      key={exam.id}
-                      className="p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-sky-500/50 hover:bg-slate-850/80 transition flex flex-col justify-between group shadow-md"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-sky-950 text-sky-400 border border-sky-800">
-                            Exam #{exam.id}
-                          </span>
-                          <span className="text-xs text-slate-500 flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" /> 45 Mins
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-white text-base group-hover:text-sky-300 transition">
-                          {exam.title}
-                        </h3>
-                        <p className="text-xs text-slate-400 mt-1 line-clamp-2">
-                          {exam.desc}
-                        </p>
-                      </div>
-
-                      <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                        <span className="text-xs font-medium text-slate-400">24 Questions</span>
-                        <button
-                          onClick={() => startMcqExam(exam.id)}
-                          className="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs flex items-center gap-1 shadow-md shadow-sky-500/20 transition"
-                        >
-                          Start Test <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* SECTION B: DIRECT READ LIST */}
-            {homeTab === 'read_list' && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                    Select Direct Read Sheet (Exams 1 to 17)
-                  </h2>
-                  <span className="text-xs text-slate-400">All questions with pre-marked answers</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {ALL_EXAMS.map(exam => (
-                    <div 
-                      key={exam.id}
-                      className="p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-850/80 transition flex flex-col justify-between group shadow-md"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
-                            Study Sheet #{exam.id}
-                          </span>
-                          <span className="text-xs text-slate-500 flex items-center gap-1">
-                            <BookOpen className="w-3.5 h-3.5" /> Canonical
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-white text-base group-hover:text-emerald-300 transition">
-                          {exam.title}
-                        </h3>
-                        <p className="text-xs text-slate-400 mt-1 line-clamp-2">
-                          Directly read all 24 questions and answers with official handbook rationales.
-                        </p>
-                      </div>
-
-                      <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                        <span className="text-xs font-medium text-slate-400">Full 24 Q&A</span>
-                        <button
-                          onClick={() => openDirectRead(exam.id)}
-                          className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center gap-1 shadow-md shadow-emerald-600/20 transition"
-                        >
-                          Read Now <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* VIEW 2: MCQ TEST ENGINE */}
-        {activeMode === 'mcq' && mcqQuestions.length > 0 && (
-          <div className="space-y-6">
-            {/* Test Navigation Bar */}
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-sky-950 text-sky-400 border border-sky-800">
-                  Exam {selectedExamId}
-                </span>
-                <h2 className="font-extrabold text-white text-base sm:text-lg">
-                  Question {currentIndex + 1} of {mcqQuestions.length}
+            {/* Section 1: MCQ Practice Tests */}
+            <div style={{ marginBottom: '40px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#38bdf8', margin: 0 }}>
+                  📝 Interactive MCQ Mock Exams (1 to 17)
                 </h2>
+                <span style={{ fontSize: '12px', color: '#94a3b8' }}>Auto-shuffled questions</span>
               </div>
-
-              <div className="flex items-center gap-4">
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-mono font-bold text-sm border ${
-                  timeLeft < 300 
-                    ? 'bg-rose-950/80 border-rose-600 text-rose-300 animate-pulse' 
-                    : 'bg-slate-800 border-slate-700 text-slate-200'
-                }`}>
-                  <Clock className="w-4 h-4 text-sky-400" />
-                  {formatTimer(timeLeft)}
-                </div>
-
-                {!isSubmitted ? (
-                  <button
-                    onClick={handleSubmitMcq}
-                    className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md transition"
-                  >
-                    Finish & Submit
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => startMcqExam(selectedExamId)}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center gap-1 border border-slate-700 transition"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" /> Retake
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Scorecard Modal / Panel if Submitted */}
-            {isSubmitted && (
-              <div className={`p-6 rounded-2xl border ${
-                scoreStats.passed 
-                  ? 'bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 border-emerald-500/50' 
-                  : 'bg-gradient-to-br from-rose-950/40 via-slate-900 to-slate-900 border-rose-500/50'
-              }`}>
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="text-center sm:text-left">
-                    <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                      scoreStats.passed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                    }`}>
-                      {scoreStats.passed ? "OFFICIAL PASS" : "NEEDS REVISION"}
-                    </span>
-                    <h3 className="text-2xl font-black text-white mt-1">
-                      Your Score: {scoreStats.correctCount} / {mcqQuestions.length} ({scoreStats.scorePct}%)
-                    </h3>
-                    <p className="text-xs text-slate-400 mt-1">
-                      Official Home Office Pass Mark: 75% (18 correct out of 24)
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    {scoreStats.passed && (
-                      <button
-                        onClick={() => setShowCertificate(true)}
-                        className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-amber-500/20 transition"
-                      >
-                        <Award className="w-4 h-4" /> Get Milan Dhanji Certificate
-                      </button>
-                    )}
-                    <button
-                      onClick={() => openDirectRead(selectedExamId)}
-                      className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition"
-                    >
-                      Read Study List
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Current Question Card */}
-            {(() => {
-              const currentQ = mcqQuestions[currentIndex];
-              const userAnswer = selectedAnswers[currentQ.id];
-              const isFlagged = flagged[currentQ.id];
-
-              return (
-                <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-lg sm:text-xl font-bold text-white leading-relaxed">
-                      {currentIndex + 1}. {currentQ.question}
-                    </h3>
-                    <button
-                      onClick={() => toggleFlag(currentQ.id)}
-                      className={`p-2 rounded-lg border transition ${
-                        isFlagged 
-                          ? 'bg-amber-500/20 border-amber-500 text-amber-400' 
-                          : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
-                      }`}
-                      title="Flag for review"
-                    >
-                      <Flag className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Options */}
-                  <div className="space-y-3">
-                    {currentQ.shuffledOptions.map((opt, idx) => {
-                      const isSelected = userAnswer === opt;
-                      const isCorrect = opt === currentQ.correct;
-
-                      let btnStyle = "border-slate-800 bg-slate-850 hover:border-slate-700 text-slate-200";
-
-                      if (isSubmitted) {
-                        if (isCorrect) {
-                          btnStyle = "border-emerald-500 bg-emerald-950/40 text-emerald-300 font-semibold";
-                        } else if (isSelected && !isCorrect) {
-                          btnStyle = "border-rose-500 bg-rose-950/40 text-rose-300";
-                        }
-                      } else if (isSelected) {
-                        btnStyle = "border-sky-500 bg-sky-950/40 text-sky-200 font-semibold ring-1 ring-sky-500";
-                      }
-
-                      return (
-                        <button
-                          key={idx}
-                          disabled={isSubmitted}
-                          onClick={() => handleSelectOption(opt)}
-                          className={`w-full text-left p-4 rounded-xl border flex items-center justify-between transition ${btnStyle}`}
-                        >
-                          <span className="text-sm sm:text-base">{opt}</span>
-                          {isSubmitted && isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />}
-                          {isSubmitted && isSelected && !isCorrect && <XCircle className="w-5 h-5 text-rose-400 shrink-0" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Rationale if submitted */}
-                  {isSubmitted && (
-                    <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs text-slate-300 space-y-1">
-                      <div className="font-bold text-sky-400 flex items-center gap-1.5">
-                        <HelpCircle className="w-4 h-4" /> Official Handbook Reference:
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: '16px'
+              }}>
+                {EXAM_SETS.map((exam) => (
+                  <div key={exam.id} style={{
+                    backgroundColor: '#1e293b',
+                    borderRadius: '12px',
+                    padding: '18px',
+                    border: '1px solid #334155',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <span style={{ backgroundColor: '#0284c7', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>
+                          Exam #{exam.id}
+                        </span>
+                        <span style={{ color: '#94a3b8', fontSize: '12px' }}>⏱️ 45 Mins</span>
                       </div>
-                      <p>{currentQ.rationale}</p>
+                      <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 6px 0' }}>{exam.title}</h3>
+                      <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 16px 0' }}>
+                        24 official questions • Instant Save & Next flow
+                      </p>
                     </div>
-                  )}
-
-                  {/* Question Nav Buttons */}
-                  <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
                     <button
-                      disabled={currentIndex === 0}
-                      onClick={() => setCurrentIndex(prev => prev - 1)}
-                      className="px-4 py-2 rounded-lg bg-slate-800 disabled:opacity-40 text-slate-200 font-semibold text-xs sm:text-sm transition"
+                      onClick={() => startMCQTest(exam)}
+                      style={{
+                        width: '100%',
+                        backgroundColor: '#0284c7',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '14px',
+                        cursor: 'pointer'
+                      }}
                     >
-                      Previous
+                      Start MCQ Exam →
                     </button>
-
-                    <div className="flex items-center gap-1">
-                      {mcqQuestions.map((q, idx) => {
-                        const answered = selectedAnswers[q.id] !== undefined;
-                        const isCur = idx === currentIndex;
-                        const hasFlag = flagged[q.id];
-
-                        let dotColor = "bg-slate-800 text-slate-400";
-                        if (isCur) dotColor = "ring-2 ring-sky-400 bg-sky-500 text-white font-bold";
-                        else if (hasFlag) dotColor = "bg-amber-500/20 text-amber-300 border border-amber-500";
-                        else if (answered) dotColor = "bg-sky-950 text-sky-300 border border-sky-800";
-
-                        return (
-                          <button
-                            key={idx}
-                            onClick={() => setCurrentIndex(idx)}
-                            className={`w-7 h-7 rounded-md text-xs flex items-center justify-center transition ${dotColor}`}
-                          >
-                            {idx + 1}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    <button
-                      disabled={currentIndex === mcqQuestions.length - 1}
-                      onClick={() => setCurrentIndex(prev => prev + 1)}
-                      className="px-4 py-2 rounded-lg bg-sky-600 disabled:opacity-40 text-white font-semibold text-xs sm:text-sm transition"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
-        )}
-
-        {/* VIEW 3: DIRECT READ LIST (CANONICAL ORDER) */}
-        {activeMode === 'read' && (
-          <div className="space-y-6">
-            {/* Header Toolbar */}
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
-                  Study Sheet
-                </span>
-                <h2 className="text-lg sm:text-xl font-black text-white mt-1">
-                  {activeExam.title} – All Questions & Answers
-                </h2>
-                <p className="text-xs text-slate-400">Read through all answers before attempting the exam.</p>
-              </div>
-
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <div className="relative flex-1 sm:w-64">
-                  <Search className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
-                  <input
-                    type="text"
-                    placeholder="Search keywords (e.g. 1066, NHS)..."
-                    value={readSearch}
-                    onChange={(e) => setReadSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <button
-                  onClick={() => startMcqExam(selectedExamId)}
-                  className="px-3.5 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs shrink-0 flex items-center gap-1 shadow-md shadow-sky-500/20 transition"
-                >
-                  ⚡ Take Exam
-                </button>
-              </div>
-            </div>
-
-            {/* Questions List */}
-            <div className="space-y-4">
-              {activeExam.questions
-                .filter(q => 
-                  q.question.toLowerCase().includes(readSearch.toLowerCase()) ||
-                  q.correct.toLowerCase().includes(readSearch.toLowerCase()) ||
-                  q.rationale.toLowerCase().includes(readSearch.toLowerCase())
-                )
-                .map((q, idx) => (
-                  <div 
-                    key={q.id}
-                    className="p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition space-y-3"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="font-bold text-white text-base">
-                        {idx + 1}. {q.question}
-                      </h3>
-                      <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
-                        Q#{idx + 1}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                      {q.options.map((opt, oIdx) => {
-                        const isCorrect = opt === q.correct;
-                        return (
-                          <div 
-                            key={oIdx}
-                            className={`p-3 rounded-lg text-xs sm:text-sm flex items-center justify-between border ${
-                              isCorrect 
-                                ? 'bg-emerald-950/40 border-emerald-500 text-emerald-300 font-semibold' 
-                                : 'bg-slate-850/60 border-slate-800 text-slate-400'
-                            }`}
-                          >
-                            <span>{opt}</span>
-                            {isCorrect && (
-                              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-extrabold flex items-center gap-1">
-                                <Check className="w-3 h-3" /> Correct Answer
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Official Explanation */}
-                    <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-800 text-xs text-slate-400 flex items-start gap-2">
-                      <HelpCircle className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                      <span>{q.rationale}</span>
-                    </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Section 2: Direct Read Question Lists */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#4ade80', margin: 0 }}>
+                  📖 Direct Read Study Lists (1 to 17)
+                </h2>
+                <span style={{ fontSize: '12px', color: '#94a3b8' }}>Answers revealed for fast memorization</span>
+              </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: '16px'
+              }}>
+                {EXAM_SETS.map((exam) => (
+                  <div key={exam.id} style={{
+                    backgroundColor: '#1e293b',
+                    borderRadius: '12px',
+                    padding: '18px',
+                    border: '1px solid #334155',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}>
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <span style={{ backgroundColor: '#15803d', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>
+                          Study List #{exam.id}
+                        </span>
+                        <span style={{ color: '#94a3b8', fontSize: '12px' }}>24 Items</span>
+                      </div>
+                      <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 6px 0' }}>{exam.title}</h3>
+                      <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 16px 0' }}>
+                        Read all 24 questions with correct answers and historical context.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => startDirectRead(exam)}
+                      style={{
+                        width: '100%',
+                        backgroundColor: '#15803d',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '10px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '14px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Read Study List 📖
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= MCQ TEST ACTIVE VIEW ================= */}
+        {view === 'mcq_test' && shuffledQuestions.length > 0 && (
+          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+            {/* Progress Header (Clean without overwhelming question pills) */}
+            <div style={{
+              backgroundColor: '#1e293b',
+              padding: '16px 20px',
+              borderRadius: '12px',
+              border: '1px solid #334155',
+              marginBottom: '20px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <span style={{ fontWeight: '700', color: '#38bdf8', fontSize: '15px' }}>
+                  {activeExam?.title}
+                </span>
+                <span style={{ fontSize: '14px', color: '#f8fafc', fontWeight: '700' }}>
+                  Question {currentQIndex + 1} of {shuffledQuestions.length}
+                </span>
+              </div>
+              
+              {/* Progress Bar */}
+              <div style={{ width: '100%', height: '8px', backgroundColor: '#334155', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{
+                  height: '100%',
+                  width: `${((currentQIndex + 1) / shuffledQuestions.length) * 100}%`,
+                  backgroundColor: '#0284c7',
+                  transition: 'width 0.3s ease'
+                }} />
+              </div>
+            </div>
+
+            {/* Current Question Card */}
+            <div style={{
+              backgroundColor: '#1e293b',
+              padding: '24px 20px',
+              borderRadius: '14px',
+              border: '1px solid #334155',
+              marginBottom: '20px',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+            }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', lineHeight: '1.5', margin: '0 0 20px 0' }}>
+                {shuffledQuestions[currentQIndex].q}
+              </h2>
+
+              {/* Options */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {shuffledQuestions[currentQIndex].shuffledOptions.map((opt, oIdx) => {
+                  const isSelected = userAnswers[currentQIndex] === opt;
+                  return (
+                    <button
+                      key={oIdx}
+                      onClick={() => handleSelectOption(opt)}
+                      style={{
+                        padding: '14px 16px',
+                        borderRadius: '10px',
+                        border: isSelected ? '2px solid #38bdf8' : '1px solid #475569',
+                        backgroundColor: isSelected ? 'rgba(56, 189, 248, 0.15)' : '#0f172a',
+                        color: isSelected ? '#38bdf8' : '#f8fafc',
+                        fontWeight: isSelected ? '700' : '500',
+                        fontSize: '15px',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        border: isSelected ? '2px solid #38bdf8' : '1px solid #64748b',
+                        backgroundColor: isSelected ? '#38bdf8' : 'transparent',
+                        color: isSelected ? '#0f172a' : '#94a3b8',
+                        fontSize: '12px',
+                        fontWeight: '800'
+                      }}>
+                        {String.fromCharCode(65 + oIdx)}
+                      </span>
+                      <span>{opt}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Navigation Footer: Previous & Save & Next */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <button
+                onClick={handlePrev}
+                disabled={currentQIndex === 0}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  borderRadius: '10px',
+                  border: '1px solid #475569',
+                  backgroundColor: currentQIndex === 0 ? '#1e293b' : '#334155',
+                  color: currentQIndex === 0 ? '#64748b' : '#f8fafc',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  cursor: currentQIndex === 0 ? 'not-allowed' : 'pointer'
+                }}
+              >
+                ← Previous
+              </button>
+
+              <button
+                onClick={handleNext}
+                disabled={!userAnswers[currentQIndex]}
+                style={{
+                  flex: 2,
+                  padding: '14px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  backgroundColor: userAnswers[currentQIndex] ? '#0284c7' : '#334155',
+                  color: userAnswers[currentQIndex] ? '#ffffff' : '#64748b',
+                  fontWeight: '700',
+                  fontSize: '15px',
+                  cursor: userAnswers[currentQIndex] ? 'pointer' : 'not-allowed',
+                  boxShadow: userAnswers[currentQIndex] ? '0 4px 12px rgba(2, 132, 199, 0.4)' : 'none'
+                }}
+              >
+                {currentQIndex === shuffledQuestions.length - 1 ? 'Save & Review Test →' : 'Save & Next →'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ================= MCQ REVIEW SUMMARY SCREEN ================= */}
+        {view === 'mcq_review' && (
+          <div style={{ maxWidth: '750px', margin: '0 auto' }}>
+            <div style={{
+              backgroundColor: '#1e293b',
+              padding: '24px 20px',
+              borderRadius: '14px',
+              border: '1px solid #334155',
+              marginBottom: '20px'
+            }}>
+              <h2 style={{ fontSize: '22px', fontWeight: '800', margin: '0 0 10px 0', color: '#38bdf8' }}>
+                📋 Test Review Summary
+              </h2>
+              <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0 0 20px 0' }}>
+                Aapne {Object.keys(userAnswers).length} of {shuffledQuestions.length} questions attempt kiye hain. Kisi bhi question ko dobara dekhne ya answer badalne ke liye uspar click karein.
+              </p>
+
+              {/* Grid of all 24 questions for review */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+                gap: '12px',
+                marginBottom: '24px'
+              }}>
+                {shuffledQuestions.map((_, idx) => {
+                  const isAnswered = !!userAnswers[idx];
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setCurrentQIndex(idx);
+                        setView('mcq_test');
+                      }}
+                      style={{
+                        padding: '12px 10px',
+                        borderRadius: '8px',
+                        border: isAnswered ? '1px solid #22c55e' : '1px solid #f97316',
+                        backgroundColor: isAnswered ? 'rgba(34, 197, 94, 0.15)' : 'rgba(249, 115, 22, 0.15)',
+                        color: isAnswered ? '#4ade80' : '#fb923c',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        fontSize: '13px',
+                        fontWeight: '700'
+                      }}
+                    >
+                      <div>Q{idx + 1}</div>
+                      <div style={{ fontSize: '11px', fontWeight: '500', marginTop: '2px' }}>
+                        {isAnswered ? '✓ Answered' : '⚠️ Pending'}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Enter Candidate Name for Certificate */}
+              <div style={{
+                backgroundColor: '#0f172a',
+                padding: '16px',
+                borderRadius: '10px',
+                border: '1px solid #334155',
+                marginBottom: '24px'
+              }}>
+                <label style={{ display: 'block', fontSize: '13px', color: '#94a3b8', marginBottom: '8px', fontWeight: '600' }}>
+                  Candidate Full Name (Certificate par aayega):
+                </label>
+                <input
+                  type="text"
+                  value={candidateName}
+                  onChange={(e) => setCandidateName(e.target.value)}
+                  placeholder="Enter your name"
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    border: '1px solid #475569',
+                    backgroundColor: '#1e293b',
+                    color: '#f8fafc',
+                    fontSize: '15px',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => {
+                    setCurrentQIndex(0);
+                    setView('mcq_test');
+                  }}
+                  style={{
+                    flex: 1,
+                    minWidth: '160px',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #475569',
+                    backgroundColor: '#334155',
+                    color: '#f8fafc',
+                    fontWeight: '700',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ← Back to Test
+                </button>
+                <button
+                  onClick={() => {
+                    setView('mcq_result');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  style={{
+                    flex: 2,
+                    minWidth: '200px',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    backgroundColor: '#22c55e',
+                    color: '#ffffff',
+                    fontWeight: '800',
+                    fontSize: '15px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 15px rgba(34, 197, 94, 0.4)'
+                  }}
+                >
+                  Submit Final Exam 🏁
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= MCQ RESULT & MILAN DHANJI CERTIFICATE ================= */}
+        {view === 'mcq_result' && (
+          <div style={{ maxWidth: '750px', margin: '0 auto' }}>
+            {/* Scorecard */}
+            <div style={{
+              backgroundColor: '#1e293b',
+              padding: '24px 20px',
+              borderRadius: '14px',
+              border: '1px solid #334155',
+              textAlign: 'center',
+              marginBottom: '28px'
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '8px' }}>
+                {isPassed ? '🎉' : '📚'}
+              </div>
+              <h2 style={{ fontSize: '26px', fontWeight: '800', margin: '0 0 6px 0', color: isPassed ? '#4ade80' : '#f87171' }}>
+                {isPassed ? 'Congratulations! You Passed!' : 'Need More Revision'}
+              </h2>
+              <p style={{ color: '#94a3b8', fontSize: '15px', margin: '0 0 20px 0' }}>
+                Your Score: <strong style={{ color: '#f8fafc' }}>{finalScore}</strong> / 24 ({Math.round((finalScore / 24) * 100)}%)
+                <br />
+                Required to Pass: 18 / 24 (75%)
+              </p>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                <button
+                  onClick={() => startMCQTest(activeExam)}
+                  style={{
+                    backgroundColor: '#0284c7',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    fontWeight: '700',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ↻ Retake Exam
+                </button>
+                <button
+                  onClick={() => setView('home')}
+                  style={{
+                    backgroundColor: '#334155',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '10px 18px',
+                    borderRadius: '8px',
+                    fontWeight: '700',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Back to Dashboard
+                </button>
+              </div>
+            </div>
+
+            {/* Official Milan Dhanji Digital Signature Certificate (Upon Pass) */}
+            {isPassed && (
+              <div style={{
+                backgroundColor: '#ffffff',
+                color: '#0f172a',
+                padding: '40px 30px',
+                borderRadius: '16px',
+                border: '10px double #0284c7',
+                marginBottom: '32px',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '32px', marginBottom: '8px' }}>🇬🇧</div>
+                <div style={{ fontSize: '12px', letterSpacing: '3px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase' }}>
+                  British Citizenship Practice Accreditation
+                </div>
+                <h1 style={{ fontSize: '28px', fontWeight: '900', margin: '14px 0', fontFamily: 'serif', color: '#0f172a' }}>
+                  Certificate of Competence
+                </h1>
+                <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 16px 0' }}>
+                  This officially certifies that
+                </p>
+                <div style={{ fontSize: '24px', fontWeight: '800', color: '#0369a1', borderBottom: '2px solid #e2e8f0', display: 'inline-block', paddingBottom: '6px', minWidth: '240px' }}>
+                  {candidateName || 'Candidate'}
+                </div>
+                <p style={{ fontSize: '14px', color: '#334155', maxWidth: '500px', margin: '16px auto', lineHeight: '1.6' }}>
+                  has successfully completed and passed the official curriculum evaluation for <strong>{activeExam?.title}</strong> scoring <strong>{finalScore}/24 ({Math.round((finalScore / 24) * 100)}%)</strong>.
+                </p>
+
+                {/* Digital Signature */}
+                <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '30px' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{
+                      fontFamily: 'cursive',
+                      fontSize: '26px',
+                      color: '#0369a1',
+                      borderBottom: '1px solid #0f172a',
+                      padding: '0 20px 4px 20px'
+                    }}>
+                      Milan Dhanji
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '6px', fontWeight: '700' }}>
+                      Certified Digital Evaluator
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '13px', fontWeight: '700', borderBottom: '1px solid #0f172a', padding: '0 20px 8px 20px' }}>
+                      {new Date().toLocaleDateString('en-GB')}
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '6px', fontWeight: '700' }}>
+                      Issue Date
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Answer Explanations */}
+            <div style={{
+              backgroundColor: '#1e293b',
+              padding: '24px 20px',
+              borderRadius: '14px',
+              border: '1px solid #334155'
+            }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', margin: '0 0 16px 0', color: '#38bdf8' }}>
+                Review Detailed Answers
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {shuffledQuestions.map((q, idx) => {
+                  const userAns = userAnswers[idx];
+                  const isCorrect = userAns === q.answer;
+                  return (
+                    <div key={idx} style={{
+                      padding: '14px',
+                      borderRadius: '10px',
+                      backgroundColor: '#0f172a',
+                      borderLeft: `4px solid ${isCorrect ? '#22c55e' : '#ef4444'}`
+                    }}>
+                      <div style={{ fontSize: '14px', fontWeight: '700', marginBottom: '6px' }}>
+                        Q{idx + 1}: {q.q}
+                      </div>
+                      <div style={{ fontSize: '13px', color: isCorrect ? '#4ade80' : '#f87171', marginBottom: '4px' }}>
+                        Your Answer: {userAns || 'Not Answered'} {isCorrect ? '✓' : '✗'}
+                      </div>
+                      {!isCorrect && (
+                        <div style={{ fontSize: '13px', color: '#38bdf8', marginBottom: '4px' }}>
+                          Correct Answer: {q.answer}
+                        </div>
+                      )}
+                      <div style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic' }}>
+                        💡 {q.explanation}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= DIRECT READ STUDY VIEW ================= */}
+        {view === 'read' && activeExam && (
+          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <div style={{
+              backgroundColor: '#1e293b',
+              padding: '20px',
+              borderRadius: '12px',
+              border: '1px solid #334155',
+              marginBottom: '20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '10px'
+            }}>
+              <div>
+                <h2 style={{ fontSize: '20px', fontWeight: '800', margin: '0 0 4px 0', color: '#4ade80' }}>
+                  📖 {activeExam.title} (Study List)
+                </h2>
+                <span style={{ fontSize: '13px', color: '#94a3b8' }}>
+                  Strict canonical question sequence with verified answers
+                </span>
+              </div>
+              <button
+                onClick={() => startMCQTest(activeExam)}
+                style={{
+                  backgroundColor: '#0284c7',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: '700',
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}
+              >
+                Take MCQ Test 📝
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {activeExam.questions.map((q, idx) => (
+                <div key={idx} style={{
+                  backgroundColor: '#1e293b',
+                  padding: '16px 18px',
+                  borderRadius: '12px',
+                  border: '1px solid #334155'
+                }}>
+                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#f8fafc', marginBottom: '8px' }}>
+                    {idx + 1}. {q.q}
+                  </div>
+                  <div style={{
+                    display: 'inline-block',
+                    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                    color: '#4ade80',
+                    border: '1px solid #22c55e',
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    marginBottom: '8px'
+                  }}>
+                    Correct Answer: {q.answer}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                    📘 {q.explanation}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
       </main>
-
-      {/* MILAN DHANJI DIGITAL SIGNATURE CERTIFICATE MODAL */}
-      {showCertificate && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl space-y-6">
-            
-            {/* Modal Controls */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                <Award className="w-4 h-4" /> Official Practice Verification
-              </span>
-              <button 
-                onClick={() => setShowCertificate(false)}
-                className="text-slate-400 hover:text-white text-xs font-bold px-2.5 py-1 rounded bg-slate-800 border border-slate-700"
-              >
-                ✕ Close
-              </button>
-            </div>
-
-            {/* Certificate Print Document */}
-            <div id="print-certificate" className="p-6 sm:p-8 rounded-xl bg-gradient-to-b from-amber-950/20 via-slate-950 to-slate-950 border-2 border-amber-500/50 text-center relative overflow-hidden space-y-5">
-              
-              <div className="flex justify-center">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/25">
-                  <ShieldCheck className="w-8 h-8 text-slate-950" />
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-xl sm:text-2xl font-black text-amber-200 tracking-wider uppercase">
-                  Certificate of Achievement
-                </h2>
-                <p className="text-xs text-slate-400 tracking-widest uppercase mt-1">
-                  Life in the United Kingdom Citizenship Examination
-                </p>
-              </div>
-
-              <div className="py-2 border-y border-amber-500/20">
-                <p className="text-xs text-slate-400">This verifies that</p>
-                <div className="flex justify-center my-1">
-                  <input
-                    type="text"
-                    value={candidateName}
-                    onChange={(e) => setCandidateName(e.target.value)}
-                    className="text-xl sm:text-2xl font-serif italic text-white text-center bg-transparent border-b border-amber-500/40 focus:outline-none focus:border-amber-400 px-3 py-1"
-                    title="Click to edit your name"
-                  />
-                </div>
-                <p className="text-xs text-slate-400">
-                  has successfully passed the comprehensive simulation test with an official passing score exceeding the 75% threshold.
-                </p>
-              </div>
-
-              {/* Digital Signature & Verification Section */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-3 px-4">
-                <div className="text-left text-xs text-slate-400 space-y-1">
-                  <p><span className="text-slate-300 font-semibold">Verification ID:</span> UK-CIT-2026-MD{selectedExamId}9X</p>
-                  <p><span className="text-slate-300 font-semibold">Curriculum:</span> Home Office 3rd Edition</p>
-                  <p><span className="text-slate-300 font-semibold">Date of Pass:</span> {new Date().toLocaleDateString('en-GB')}</p>
-                </div>
-
-                <div className="text-center">
-                  {/* Digital Signature SVG */}
-                  <svg className="w-36 h-12 mx-auto text-amber-300" viewBox="0 0 200 60" fill="none" stroke="currentColor">
-                    <path 
-                      d="M 15,45 C 30,10 40,55 55,25 C 70,5 75,50 90,30 C 105,15 120,40 145,20 C 160,10 180,35 190,25" 
-                      strokeWidth="2.5" 
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="border-t border-slate-700 pt-1">
-                    <p className="font-serif italic font-bold text-amber-200 text-sm">Milan Dhanji</p>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-widest">Chief Verification Officer</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                onClick={() => window.print()}
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center gap-1.5 shadow-lg transition"
-              >
-                <Printer className="w-4 h-4" /> Print / Save as PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Footer */}
-      <footer className="mt-auto border-t border-slate-900 bg-slate-950 px-4 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 Life in the UK Citizenship Practice Portal. Verified with 3rd Edition Handbook.</p>
-      </footer>
     </div>
   );
 }
