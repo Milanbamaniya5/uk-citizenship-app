@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 // Fisher-Yates Shuffling Function
 function shuffleArray(array) {
@@ -80,6 +80,7 @@ const EXAM_SETS = [
 
 export default function App() {
   const [view, setView] = useState('home'); // 'home', 'mcq_test', 'mcq_review', 'mcq_result', 'read'
+  const [homeTab, setHomeTab] = useState('mcq'); // 'mcq' or 'read' - Top choice
   const [activeExam, setActiveExam] = useState(null);
   
   // MCQ state
@@ -121,7 +122,7 @@ export default function App() {
       setCurrentQIndex(currentQIndex + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      // Last question completed -> Go to Review Screen
+      // Last question completed -> Review Screen
       setView('mcq_review');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -161,24 +162,24 @@ export default function App() {
       margin: 0,
       padding: 0
     }}>
-      {/* Top Navigation */}
+      {/* Top Header */}
       <header style={{
         backgroundColor: '#1e293b',
         borderBottom: '1px solid #334155',
-        padding: '16px 20px',
+        padding: '14px 16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
         boxSizing: 'border-box'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '24px' }}>🇬🇧</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '22px' }}>🇬🇧</span>
           <div>
-            <div style={{ fontWeight: '800', fontSize: '18px', letterSpacing: '-0.5px', color: '#38bdf8' }}>
-              Life in the UK Practice
+            <div style={{ fontWeight: '800', fontSize: '16px', color: '#38bdf8' }}>
+              Life in UK Practice
             </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8' }}>Official Citizenship Mock Tests 2026</div>
+            <div style={{ fontSize: '11px', color: '#94a3b8' }}>Official 2026 Tests</div>
           </div>
         </div>
         {view !== 'home' && (
@@ -188,11 +189,11 @@ export default function App() {
               backgroundColor: '#334155',
               color: '#f8fafc',
               border: 'none',
-              padding: '8px 16px',
-              borderRadius: '8px',
+              padding: '6px 12px',
+              borderRadius: '6px',
               cursor: 'pointer',
-              fontWeight: '600',
-              fontSize: '13px'
+              fontWeight: '700',
+              fontSize: '12px'
             }}
           >
             ← Home
@@ -200,8 +201,8 @@ export default function App() {
         )}
       </header>
 
-      {/* Main Content Area */}
-      <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '20px 16px', boxSizing: 'border-box' }}>
+      {/* Main Content */}
+      <main style={{ maxWidth: '900px', margin: '0 auto', padding: '16px 14px', boxSizing: 'border-box' }}>
         
         {/* ================= HOME VIEW ================= */}
         {view === 'home' && (
@@ -209,167 +210,226 @@ export default function App() {
             {/* Banner */}
             <div style={{
               background: 'linear-gradient(135deg, #1e3a8a, #0369a1)',
-              padding: '28px 20px',
-              borderRadius: '16px',
-              marginBottom: '32px',
-              textAlign: 'center',
-              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)'
+              padding: '20px 16px',
+              borderRadius: '14px',
+              marginBottom: '20px',
+              textAlign: 'center'
             }}>
-              <h1 style={{ fontSize: '28px', fontWeight: '800', margin: '0 0 10px 0' }}>
-                Pass Your British Citizenship Test
+              <h1 style={{ fontSize: '22px', fontWeight: '800', margin: '0 0 8px 0' }}>
+                Life in the UK Exam Preparation
               </h1>
-              <p style={{ color: '#bae6fd', fontSize: '15px', maxWidth: '650px', margin: '0 auto 16px auto', lineHeight: '1.5' }}>
-                Complete 17 official mock exams with auto-shuffling, instant explanations, comprehensive study lists, and Milan Dhanji certified pass credentials.
+              <p style={{ color: '#bae6fd', fontSize: '13px', margin: '0 0 12px 0' }}>
+                Choose your study mode below to start practicing or reading the official questions.
               </p>
               <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
+                display: 'inline-block',
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                padding: '6px 14px',
-                borderRadius: '20px',
-                fontSize: '13px',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                fontSize: '12px',
                 fontWeight: '600'
               }}>
-                ✨ Pass Mark: 18 / 24 Questions (75%)
+                ✨ Pass Mark: 18 / 24 (75%)
               </div>
             </div>
 
-            {/* Section 1: MCQ Practice Tests */}
-            <div style={{ marginBottom: '40px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#38bdf8', margin: 0 }}>
-                  📝 Interactive MCQ Mock Exams (1 to 17)
-                </h2>
-                <span style={{ fontSize: '12px', color: '#94a3b8' }}>Auto-shuffled questions</span>
-              </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '16px'
-              }}>
-                {EXAM_SETS.map((exam) => (
-                  <div key={exam.id} style={{
-                    backgroundColor: '#1e293b',
-                    borderRadius: '12px',
-                    padding: '18px',
-                    border: '1px solid #334155',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between'
-                  }}>
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                        <span style={{ backgroundColor: '#0284c7', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>
-                          Exam #{exam.id}
-                        </span>
-                        <span style={{ color: '#94a3b8', fontSize: '12px' }}>⏱️ 45 Mins</span>
-                      </div>
-                      <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 6px 0' }}>{exam.title}</h3>
-                      <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 16px 0' }}>
-                        24 official questions • Instant Save & Next flow
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => startMCQTest(exam)}
-                      style={{
-                        width: '100%',
-                        backgroundColor: '#0284c7',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '10px',
-                        borderRadius: '8px',
-                        fontWeight: '700',
-                        fontSize: '14px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Start MCQ Exam →
-                    </button>
-                  </div>
-                ))}
-              </div>
+            {/* TOP CHOICE SELECTOR (MCQ vs Read-Only) */}
+            <div style={{
+              backgroundColor: '#1e293b',
+              padding: '6px',
+              borderRadius: '12px',
+              display: 'flex',
+              gap: '6px',
+              marginBottom: '24px',
+              border: '1px solid #334155'
+            }}>
+              <button
+                onClick={() => setHomeTab('mcq')}
+                style={{
+                  flex: 1,
+                  padding: '12px 8px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: homeTab === 'mcq' ? '#0284c7' : 'transparent',
+                  color: homeTab === 'mcq' ? '#ffffff' : '#94a3b8',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  boxShadow: homeTab === 'mcq' ? '0 2px 8px rgba(2, 132, 199, 0.4)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <span>📝</span>
+                <span>MCQ Practice Tests</span>
+              </button>
+
+              <button
+                onClick={() => setHomeTab('read')}
+                style={{
+                  flex: 1,
+                  padding: '12px 8px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: homeTab === 'read' ? '#15803d' : 'transparent',
+                  color: homeTab === 'read' ? '#ffffff' : '#94a3b8',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  boxShadow: homeTab === 'read' ? '0 2px 8px rgba(21, 128, 61, 0.4)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <span>📖</span>
+                <span>Direct Read Only</span>
+              </button>
             </div>
 
-            {/* Section 2: Direct Read Question Lists */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#4ade80', margin: 0 }}>
-                  📖 Direct Read Study Lists (1 to 17)
-                </h2>
-                <span style={{ fontSize: '12px', color: '#94a3b8' }}>Answers revealed for fast memorization</span>
-              </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '16px'
-              }}>
-                {EXAM_SETS.map((exam) => (
-                  <div key={exam.id} style={{
-                    backgroundColor: '#1e293b',
-                    borderRadius: '12px',
-                    padding: '18px',
-                    border: '1px solid #334155',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between'
-                  }}>
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                        <span style={{ backgroundColor: '#15803d', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '3px 8px', borderRadius: '6px' }}>
-                          Study List #{exam.id}
-                        </span>
-                        <span style={{ color: '#94a3b8', fontSize: '12px' }}>24 Items</span>
+            {/* TAB CONTENT: 1. MCQ Practice Mode */}
+            {homeTab === 'mcq' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#38bdf8', margin: 0 }}>
+                    Select MCQ Exam (1 to 17)
+                  </h2>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>Shuffled & Timed</span>
+                </div>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                  gap: '14px'
+                }}>
+                  {EXAM_SETS.map((exam) => (
+                    <div key={exam.id} style={{
+                      backgroundColor: '#1e293b',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid #334155',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
+                    }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                          <span style={{ backgroundColor: '#0284c7', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '4px' }}>
+                            Exam #{exam.id}
+                          </span>
+                          <span style={{ color: '#94a3b8', fontSize: '11px' }}>⏱️ 45 Mins</span>
+                        </div>
+                        <h3 style={{ fontSize: '15px', fontWeight: '600', margin: '0 0 6px 0' }}>{exam.title}</h3>
+                        <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 14px 0' }}>
+                          24 questions • Auto-shuffled options
+                        </p>
                       </div>
-                      <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 6px 0' }}>{exam.title}</h3>
-                      <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 16px 0' }}>
-                        Read all 24 questions with correct answers and historical context.
-                      </p>
+                      <button
+                        onClick={() => startMCQTest(exam)}
+                        style={{
+                          width: '100%',
+                          backgroundColor: '#0284c7',
+                          color: '#fff',
+                          border: 'none',
+                          padding: '10px',
+                          borderRadius: '8px',
+                          fontWeight: '700',
+                          fontSize: '13px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Start MCQ Exam →
+                      </button>
                     </div>
-                    <button
-                      onClick={() => startDirectRead(exam)}
-                      style={{
-                        width: '100%',
-                        backgroundColor: '#15803d',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '10px',
-                        borderRadius: '8px',
-                        fontWeight: '700',
-                        fontSize: '14px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Read Study List 📖
-                    </button>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* TAB CONTENT: 2. Direct Read Only Mode */}
+            {homeTab === 'read' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#4ade80', margin: 0 }}>
+                    Select Study List (1 to 17)
+                  </h2>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>Direct Memorization</span>
+                </div>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+                  gap: '14px'
+                }}>
+                  {EXAM_SETS.map((exam) => (
+                    <div key={exam.id} style={{
+                      backgroundColor: '#1e293b',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: '1px solid #334155',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between'
+                    }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                          <span style={{ backgroundColor: '#15803d', color: '#fff', fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '4px' }}>
+                            Study List #{exam.id}
+                          </span>
+                          <span style={{ color: '#94a3b8', fontSize: '11px' }}>24 Items</span>
+                        </div>
+                        <h3 style={{ fontSize: '15px', fontWeight: '600', margin: '0 0 6px 0' }}>{exam.title}</h3>
+                        <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 14px 0' }}>
+                          Instant answers with explanations.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => startDirectRead(exam)}
+                        style={{
+                          width: '100%',
+                          backgroundColor: '#15803d',
+                          color: '#fff',
+                          border: 'none',
+                          padding: '10px',
+                          borderRadius: '8px',
+                          fontWeight: '700',
+                          fontSize: '13px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Read Study List 📖
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {/* ================= MCQ TEST ACTIVE VIEW ================= */}
         {view === 'mcq_test' && shuffledQuestions.length > 0 && (
-          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-            {/* Progress Header (Clean without overwhelming question pills) */}
+          <div style={{ maxWidth: '650px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+            {/* Clean Progress Header */}
             <div style={{
               backgroundColor: '#1e293b',
-              padding: '16px 20px',
+              padding: '14px 16px',
               borderRadius: '12px',
               border: '1px solid #334155',
-              marginBottom: '20px'
+              marginBottom: '16px'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontWeight: '700', color: '#38bdf8', fontSize: '15px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontWeight: '700', color: '#38bdf8', fontSize: '14px' }}>
                   {activeExam?.title}
                 </span>
-                <span style={{ fontSize: '14px', color: '#f8fafc', fontWeight: '700' }}>
+                <span style={{ fontSize: '13px', color: '#f8fafc', fontWeight: '700' }}>
                   Question {currentQIndex + 1} of {shuffledQuestions.length}
                 </span>
               </div>
-              
-              {/* Progress Bar */}
-              <div style={{ width: '100%', height: '8px', backgroundColor: '#334155', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ width: '100%', height: '6px', backgroundColor: '#334155', borderRadius: '3px', overflow: 'hidden' }}>
                 <div style={{
                   height: '100%',
                   width: `${((currentQIndex + 1) / shuffledQuestions.length) * 100}%`,
@@ -379,21 +439,19 @@ export default function App() {
               </div>
             </div>
 
-            {/* Current Question Card */}
+            {/* Current Question */}
             <div style={{
               backgroundColor: '#1e293b',
-              padding: '24px 20px',
-              borderRadius: '14px',
+              padding: '20px 16px',
+              borderRadius: '12px',
               border: '1px solid #334155',
-              marginBottom: '20px',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+              marginBottom: '16px'
             }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '700', lineHeight: '1.5', margin: '0 0 20px 0' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: '700', lineHeight: '1.5', margin: '0 0 16px 0' }}>
                 {shuffledQuestions[currentQIndex].q}
               </h2>
 
-              {/* Options */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {shuffledQuestions[currentQIndex].shuffledOptions.map((opt, oIdx) => {
                   const isSelected = userAnswers[currentQIndex] === opt;
                   return (
@@ -401,32 +459,31 @@ export default function App() {
                       key={oIdx}
                       onClick={() => handleSelectOption(opt)}
                       style={{
-                        padding: '14px 16px',
-                        borderRadius: '10px',
+                        padding: '12px 14px',
+                        borderRadius: '8px',
                         border: isSelected ? '2px solid #38bdf8' : '1px solid #475569',
                         backgroundColor: isSelected ? 'rgba(56, 189, 248, 0.15)' : '#0f172a',
                         color: isSelected ? '#38bdf8' : '#f8fafc',
                         fontWeight: isSelected ? '700' : '500',
-                        fontSize: '15px',
+                        fontSize: '14px',
                         textAlign: 'left',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '12px',
-                        transition: 'all 0.15s ease'
+                        gap: '10px'
                       }}
                     >
                       <span style={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '24px',
-                        height: '24px',
+                        width: '22px',
+                        height: '22px',
                         borderRadius: '50%',
                         border: isSelected ? '2px solid #38bdf8' : '1px solid #64748b',
                         backgroundColor: isSelected ? '#38bdf8' : 'transparent',
                         color: isSelected ? '#0f172a' : '#94a3b8',
-                        fontSize: '12px',
+                        fontSize: '11px',
                         fontWeight: '800'
                       }}>
                         {String.fromCharCode(65 + oIdx)}
@@ -438,25 +495,20 @@ export default function App() {
               </div>
             </div>
 
-            {/* Navigation Footer: Previous & Save & Next */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
+            {/* Navigation: Prev & Save & Next */}
+            <div style={{ display: 'flex', gap: '10px' }}>
               <button
                 onClick={handlePrev}
                 disabled={currentQIndex === 0}
                 style={{
                   flex: 1,
-                  padding: '14px',
-                  borderRadius: '10px',
+                  padding: '12px',
+                  borderRadius: '8px',
                   border: '1px solid #475569',
                   backgroundColor: currentQIndex === 0 ? '#1e293b' : '#334155',
                   color: currentQIndex === 0 ? '#64748b' : '#f8fafc',
                   fontWeight: '700',
-                  fontSize: '14px',
+                  fontSize: '13px',
                   cursor: currentQIndex === 0 ? 'not-allowed' : 'pointer'
                 }}
               >
@@ -468,15 +520,14 @@ export default function App() {
                 disabled={!userAnswers[currentQIndex]}
                 style={{
                   flex: 2,
-                  padding: '14px',
-                  borderRadius: '10px',
+                  padding: '12px',
+                  borderRadius: '8px',
                   border: 'none',
                   backgroundColor: userAnswers[currentQIndex] ? '#0284c7' : '#334155',
                   color: userAnswers[currentQIndex] ? '#ffffff' : '#64748b',
                   fontWeight: '700',
-                  fontSize: '15px',
-                  cursor: userAnswers[currentQIndex] ? 'pointer' : 'not-allowed',
-                  boxShadow: userAnswers[currentQIndex] ? '0 4px 12px rgba(2, 132, 199, 0.4)' : 'none'
+                  fontSize: '14px',
+                  cursor: userAnswers[currentQIndex] ? 'pointer' : 'not-allowed'
                 }}
               >
                 {currentQIndex === shuffledQuestions.length - 1 ? 'Save & Review Test →' : 'Save & Next →'}
@@ -485,29 +536,29 @@ export default function App() {
           </div>
         )}
 
-        {/* ================= MCQ REVIEW SUMMARY SCREEN ================= */}
+        {/* ================= MCQ REVIEW SCREEN ================= */}
         {view === 'mcq_review' && (
-          <div style={{ maxWidth: '750px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '650px', margin: '0 auto' }}>
             <div style={{
               backgroundColor: '#1e293b',
-              padding: '24px 20px',
-              borderRadius: '14px',
+              padding: '20px 16px',
+              borderRadius: '12px',
               border: '1px solid #334155',
-              marginBottom: '20px'
+              marginBottom: '16px'
             }}>
-              <h2 style={{ fontSize: '22px', fontWeight: '800', margin: '0 0 10px 0', color: '#38bdf8' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: '800', margin: '0 0 8px 0', color: '#38bdf8' }}>
                 📋 Test Review Summary
               </h2>
-              <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0 0 20px 0' }}>
-                Aapne {Object.keys(userAnswers).length} of {shuffledQuestions.length} questions attempt kiye hain. Kisi bhi question ko dobara dekhne ya answer badalne ke liye uspar click karein.
+              <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0 0 16px 0' }}>
+                Aapne {Object.keys(userAnswers).length} of {shuffledQuestions.length} questions solve kiye hain. Answer badalne ke liye kisi bhi question par tap karein.
               </p>
 
-              {/* Grid of all 24 questions for review */}
+              {/* 24 Question status */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
-                gap: '12px',
-                marginBottom: '24px'
+                gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
+                gap: '8px',
+                marginBottom: '20px'
               }}>
                 {shuffledQuestions.map((_, idx) => {
                   const isAnswered = !!userAnswers[idx];
@@ -519,36 +570,36 @@ export default function App() {
                         setView('mcq_test');
                       }}
                       style={{
-                        padding: '12px 10px',
-                        borderRadius: '8px',
+                        padding: '10px 8px',
+                        borderRadius: '6px',
                         border: isAnswered ? '1px solid #22c55e' : '1px solid #f97316',
                         backgroundColor: isAnswered ? 'rgba(34, 197, 94, 0.15)' : 'rgba(249, 115, 22, 0.15)',
                         color: isAnswered ? '#4ade80' : '#fb923c',
                         cursor: 'pointer',
                         textAlign: 'center',
-                        fontSize: '13px',
+                        fontSize: '12px',
                         fontWeight: '700'
                       }}
                     >
                       <div>Q{idx + 1}</div>
-                      <div style={{ fontSize: '11px', fontWeight: '500', marginTop: '2px' }}>
-                        {isAnswered ? '✓ Answered' : '⚠️ Pending'}
+                      <div style={{ fontSize: '10px', marginTop: '2px' }}>
+                        {isAnswered ? '✓ Saved' : '⚠️ Empty'}
                       </div>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Enter Candidate Name for Certificate */}
+              {/* Candidate Name for Certificate */}
               <div style={{
                 backgroundColor: '#0f172a',
-                padding: '16px',
-                borderRadius: '10px',
+                padding: '14px',
+                borderRadius: '8px',
                 border: '1px solid #334155',
-                marginBottom: '24px'
+                marginBottom: '20px'
               }}>
-                <label style={{ display: 'block', fontSize: '13px', color: '#94a3b8', marginBottom: '8px', fontWeight: '600' }}>
-                  Candidate Full Name (Certificate par aayega):
+                <label style={{ display: 'block', fontSize: '12px', color: '#94a3b8', marginBottom: '6px', fontWeight: '600' }}>
+                  Candidate Full Name (Certificate ke liye):
                 </label>
                 <input
                   type="text"
@@ -557,19 +608,18 @@ export default function App() {
                   placeholder="Enter your name"
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
                     border: '1px solid #475569',
                     backgroundColor: '#1e293b',
                     color: '#f8fafc',
-                    fontSize: '15px',
+                    fontSize: '14px',
                     boxSizing: 'border-box'
                   }}
                 />
               </div>
 
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '10px' }}>
                 <button
                   onClick={() => {
                     setCurrentQIndex(0);
@@ -577,17 +627,17 @@ export default function App() {
                   }}
                   style={{
                     flex: 1,
-                    minWidth: '160px',
                     padding: '12px',
                     borderRadius: '8px',
                     border: '1px solid #475569',
                     backgroundColor: '#334155',
                     color: '#f8fafc',
                     fontWeight: '700',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    fontSize: '13px'
                   }}
                 >
-                  ← Back to Test
+                  ← Edit
                 </button>
                 <button
                   onClick={() => {
@@ -596,16 +646,14 @@ export default function App() {
                   }}
                   style={{
                     flex: 2,
-                    minWidth: '200px',
                     padding: '12px',
                     borderRadius: '8px',
                     border: 'none',
                     backgroundColor: '#22c55e',
                     color: '#ffffff',
                     fontWeight: '800',
-                    fontSize: '15px',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 15px rgba(34, 197, 94, 0.4)'
+                    fontSize: '14px',
+                    cursor: 'pointer'
                   }}
                 >
                   Submit Final Exam 🏁
@@ -615,44 +663,43 @@ export default function App() {
           </div>
         )}
 
-        {/* ================= MCQ RESULT & MILAN DHANJI CERTIFICATE ================= */}
+        {/* ================= MCQ RESULT & CERTIFICATE ================= */}
         {view === 'mcq_result' && (
-          <div style={{ maxWidth: '750px', margin: '0 auto' }}>
-            {/* Scorecard */}
+          <div style={{ maxWidth: '650px', margin: '0 auto' }}>
             <div style={{
               backgroundColor: '#1e293b',
-              padding: '24px 20px',
-              borderRadius: '14px',
+              padding: '20px 16px',
+              borderRadius: '12px',
               border: '1px solid #334155',
               textAlign: 'center',
-              marginBottom: '28px'
+              marginBottom: '20px'
             }}>
-              <div style={{ fontSize: '48px', marginBottom: '8px' }}>
+              <div style={{ fontSize: '40px', marginBottom: '6px' }}>
                 {isPassed ? '🎉' : '📚'}
               </div>
-              <h2 style={{ fontSize: '26px', fontWeight: '800', margin: '0 0 6px 0', color: isPassed ? '#4ade80' : '#f87171' }}>
+              <h2 style={{ fontSize: '22px', fontWeight: '800', margin: '0 0 6px 0', color: isPassed ? '#4ade80' : '#f87171' }}>
                 {isPassed ? 'Congratulations! You Passed!' : 'Need More Revision'}
               </h2>
-              <p style={{ color: '#94a3b8', fontSize: '15px', margin: '0 0 20px 0' }}>
+              <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0 0 16px 0' }}>
                 Your Score: <strong style={{ color: '#f8fafc' }}>{finalScore}</strong> / 24 ({Math.round((finalScore / 24) * 100)}%)
                 <br />
-                Required to Pass: 18 / 24 (75%)
+                Pass Mark: 18 / 24 (75%)
               </p>
-
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
                 <button
                   onClick={() => startMCQTest(activeExam)}
                   style={{
                     backgroundColor: '#0284c7',
                     color: '#fff',
                     border: 'none',
-                    padding: '10px 18px',
-                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
                     fontWeight: '700',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    fontSize: '13px'
                   }}
                 >
-                  ↻ Retake Exam
+                  ↻ Retake
                 </button>
                 <button
                   onClick={() => setView('home')}
@@ -660,67 +707,60 @@ export default function App() {
                     backgroundColor: '#334155',
                     color: '#fff',
                     border: 'none',
-                    padding: '10px 18px',
-                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
                     fontWeight: '700',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    fontSize: '13px'
                   }}
                 >
-                  Back to Dashboard
+                  Dashboard
                 </button>
               </div>
             </div>
 
-            {/* Official Milan Dhanji Digital Signature Certificate (Upon Pass) */}
+            {/* Milan Dhanji Certificate (Upon Passing) */}
             {isPassed && (
               <div style={{
                 backgroundColor: '#ffffff',
                 color: '#0f172a',
-                padding: '40px 30px',
-                borderRadius: '16px',
-                border: '10px double #0284c7',
-                marginBottom: '32px',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                padding: '30px 18px',
+                borderRadius: '12px',
+                border: '8px double #0284c7',
+                marginBottom: '24px',
                 textAlign: 'center'
               }}>
-                <div style={{ fontSize: '32px', marginBottom: '8px' }}>🇬🇧</div>
-                <div style={{ fontSize: '12px', letterSpacing: '3px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase' }}>
+                <div style={{ fontSize: '26px' }}>🇬🇧</div>
+                <div style={{ fontSize: '11px', letterSpacing: '2px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase' }}>
                   British Citizenship Practice Accreditation
                 </div>
-                <h1 style={{ fontSize: '28px', fontWeight: '900', margin: '14px 0', fontFamily: 'serif', color: '#0f172a' }}>
+                <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '10px 0', fontFamily: 'serif', color: '#0f172a' }}>
                   Certificate of Competence
                 </h1>
-                <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 16px 0' }}>
-                  This officially certifies that
+                <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 10px 0' }}>
+                  This certifies that
                 </p>
-                <div style={{ fontSize: '24px', fontWeight: '800', color: '#0369a1', borderBottom: '2px solid #e2e8f0', display: 'inline-block', paddingBottom: '6px', minWidth: '240px' }}>
+                <div style={{ fontSize: '20px', fontWeight: '800', color: '#0369a1', borderBottom: '2px solid #e2e8f0', display: 'inline-block', paddingBottom: '4px' }}>
                   {candidateName || 'Candidate'}
                 </div>
-                <p style={{ fontSize: '14px', color: '#334155', maxWidth: '500px', margin: '16px auto', lineHeight: '1.6' }}>
-                  has successfully completed and passed the official curriculum evaluation for <strong>{activeExam?.title}</strong> scoring <strong>{finalScore}/24 ({Math.round((finalScore / 24) * 100)}%)</strong>.
+                <p style={{ fontSize: '13px', color: '#334155', maxWidth: '420px', margin: '14px auto', lineHeight: '1.5' }}>
+                  has successfully passed <strong>{activeExam?.title}</strong> scoring <strong>{finalScore}/24 ({Math.round((finalScore / 24) * 100)}%)</strong>.
                 </p>
 
-                {/* Digital Signature */}
-                <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '30px' }}>
+                <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '20px' }}>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{
-                      fontFamily: 'cursive',
-                      fontSize: '26px',
-                      color: '#0369a1',
-                      borderBottom: '1px solid #0f172a',
-                      padding: '0 20px 4px 20px'
-                    }}>
+                    <div style={{ fontFamily: 'cursive', fontSize: '22px', color: '#0369a1', borderBottom: '1px solid #0f172a', padding: '0 14px 2px 14px' }}>
                       Milan Dhanji
                     </div>
-                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '6px', fontWeight: '700' }}>
+                    <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px', fontWeight: '700' }}>
                       Certified Digital Evaluator
                     </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '13px', fontWeight: '700', borderBottom: '1px solid #0f172a', padding: '0 20px 8px 20px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: '700', borderBottom: '1px solid #0f172a', padding: '0 14px 6px 14px' }}>
                       {new Date().toLocaleDateString('en-GB')}
                     </div>
-                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '6px', fontWeight: '700' }}>
+                    <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px', fontWeight: '700' }}>
                       Issue Date
                     </div>
                   </div>
@@ -731,36 +771,36 @@ export default function App() {
             {/* Answer Explanations */}
             <div style={{
               backgroundColor: '#1e293b',
-              padding: '24px 20px',
-              borderRadius: '14px',
+              padding: '16px',
+              borderRadius: '12px',
               border: '1px solid #334155'
             }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '700', margin: '0 0 16px 0', color: '#38bdf8' }}>
-                Review Detailed Answers
+              <h3 style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 14px 0', color: '#38bdf8' }}>
+                Review Answers
               </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {shuffledQuestions.map((q, idx) => {
                   const userAns = userAnswers[idx];
                   const isCorrect = userAns === q.answer;
                   return (
                     <div key={idx} style={{
-                      padding: '14px',
-                      borderRadius: '10px',
+                      padding: '12px',
+                      borderRadius: '8px',
                       backgroundColor: '#0f172a',
                       borderLeft: `4px solid ${isCorrect ? '#22c55e' : '#ef4444'}`
                     }}>
-                      <div style={{ fontSize: '14px', fontWeight: '700', marginBottom: '6px' }}>
+                      <div style={{ fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>
                         Q{idx + 1}: {q.q}
                       </div>
-                      <div style={{ fontSize: '13px', color: isCorrect ? '#4ade80' : '#f87171', marginBottom: '4px' }}>
+                      <div style={{ fontSize: '12px', color: isCorrect ? '#4ade80' : '#f87171' }}>
                         Your Answer: {userAns || 'Not Answered'} {isCorrect ? '✓' : '✗'}
                       </div>
                       {!isCorrect && (
-                        <div style={{ fontSize: '13px', color: '#38bdf8', marginBottom: '4px' }}>
-                          Correct Answer: {q.answer}
+                        <div style={{ fontSize: '12px', color: '#38bdf8' }}>
+                          Correct: {q.answer}
                         </div>
                       )}
-                      <div style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic' }}>
+                      <div style={{ fontSize: '11px', color: '#94a3b8', fontStyle: 'italic', marginTop: '2px' }}>
                         💡 {q.explanation}
                       </div>
                     </div>
@@ -773,25 +813,23 @@ export default function App() {
 
         {/* ================= DIRECT READ STUDY VIEW ================= */}
         {view === 'read' && activeExam && (
-          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '700px', margin: '0 auto' }}>
             <div style={{
               backgroundColor: '#1e293b',
-              padding: '20px',
+              padding: '14px 16px',
               borderRadius: '12px',
               border: '1px solid #334155',
-              marginBottom: '20px',
+              marginBottom: '16px',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '10px'
+              alignItems: 'center'
             }}>
               <div>
-                <h2 style={{ fontSize: '20px', fontWeight: '800', margin: '0 0 4px 0', color: '#4ade80' }}>
+                <h2 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 2px 0', color: '#4ade80' }}>
                   📖 {activeExam.title} (Study List)
                 </h2>
-                <span style={{ fontSize: '13px', color: '#94a3b8' }}>
-                  Strict canonical question sequence with verified answers
+                <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                  Direct canonical sequence with answers
                 </span>
               </div>
               <button
@@ -800,26 +838,26 @@ export default function App() {
                   backgroundColor: '#0284c7',
                   color: '#fff',
                   border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '8px',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
                   fontWeight: '700',
-                  fontSize: '13px',
+                  fontSize: '12px',
                   cursor: 'pointer'
                 }}
               >
-                Take MCQ Test 📝
+                Test 📝
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {activeExam.questions.map((q, idx) => (
                 <div key={idx} style={{
                   backgroundColor: '#1e293b',
-                  padding: '16px 18px',
-                  borderRadius: '12px',
+                  padding: '14px',
+                  borderRadius: '10px',
                   border: '1px solid #334155'
                 }}>
-                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#f8fafc', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#f8fafc', marginBottom: '6px' }}>
                     {idx + 1}. {q.q}
                   </div>
                   <div style={{
@@ -827,15 +865,15 @@ export default function App() {
                     backgroundColor: 'rgba(34, 197, 94, 0.15)',
                     color: '#4ade80',
                     border: '1px solid #22c55e',
-                    padding: '4px 10px',
-                    borderRadius: '6px',
-                    fontSize: '13px',
+                    padding: '3px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
                     fontWeight: '700',
-                    marginBottom: '8px'
+                    marginBottom: '6px'
                   }}>
-                    Correct Answer: {q.answer}
+                    Answer: {q.answer}
                   </div>
-                  <div style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                  <div style={{ fontSize: '12px', color: '#94a3b8', lineHeight: '1.4' }}>
                     📘 {q.explanation}
                   </div>
                 </div>
