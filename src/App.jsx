@@ -80,7 +80,7 @@ const EXAM_SETS = [
 
 export default function App() {
   const [view, setView] = useState('home'); // 'home', 'mcq_test', 'mcq_review', 'mcq_result', 'read'
-  const [homeTab, setHomeTab] = useState('mcq'); // 'mcq' or 'read' - Top choice
+  const [homeTab, setHomeTab] = useState('mcq'); // 'mcq' or 'read'
   const [activeExam, setActiveExam] = useState(null);
   
   // MCQ state
@@ -122,7 +122,6 @@ export default function App() {
       setCurrentQIndex(currentQIndex + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      // Last question completed -> Review Screen
       setView('mcq_review');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -357,7 +356,7 @@ export default function App() {
                   <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#4ade80', margin: 0 }}>
                     Select Study List (1 to 17)
                   </h2>
-                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>Direct Memorization</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>All 4 Options with Green Answer</span>
                 </div>
                 <div style={{
                   display: 'grid',
@@ -383,7 +382,7 @@ export default function App() {
                         </div>
                         <h3 style={{ fontSize: '15px', fontWeight: '600', margin: '0 0 6px 0' }}>{exam.title}</h3>
                         <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 14px 0' }}>
-                          Instant answers with explanations.
+                          4 options with correct answer highlighted in green.
                         </p>
                       </div>
                       <button
@@ -413,7 +412,6 @@ export default function App() {
         {/* ================= MCQ TEST ACTIVE VIEW ================= */}
         {view === 'mcq_test' && shuffledQuestions.length > 0 && (
           <div style={{ maxWidth: '650px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-            {/* Clean Progress Header */}
             <div style={{
               backgroundColor: '#1e293b',
               padding: '14px 16px',
@@ -439,7 +437,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Current Question */}
             <div style={{
               backgroundColor: '#1e293b',
               padding: '20px 16px',
@@ -495,7 +492,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Navigation: Prev & Save & Next */}
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
                 onClick={handlePrev}
@@ -553,7 +549,6 @@ export default function App() {
                 Aapne {Object.keys(userAnswers).length} of {shuffledQuestions.length} questions solve kiye hain. Answer badalne ke liye kisi bhi question par tap karein.
               </p>
 
-              {/* 24 Question status */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
@@ -590,7 +585,6 @@ export default function App() {
                 })}
               </div>
 
-              {/* Candidate Name for Certificate */}
               <div style={{
                 backgroundColor: '#0f172a',
                 padding: '14px',
@@ -768,7 +762,7 @@ export default function App() {
               </div>
             )}
 
-            {/* Answer Explanations */}
+            {/* Review Answers */}
             <div style={{
               backgroundColor: '#1e293b',
               padding: '16px',
@@ -811,9 +805,10 @@ export default function App() {
           </div>
         )}
 
-        {/* ================= DIRECT READ STUDY VIEW ================= */}
+        {/* ================= DIRECT READ STUDY VIEW (ALL 4 OPTIONS + GREEN ANSWER) ================= */}
         {view === 'read' && activeExam && (
-          <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+            {/* Header */}
             <div style={{
               backgroundColor: '#1e293b',
               padding: '14px 16px',
@@ -822,14 +817,16 @@ export default function App() {
               marginBottom: '16px',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center'
+              alignItems: 'center',
+              gap: '10px',
+              flexWrap: 'wrap'
             }}>
               <div>
                 <h2 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 2px 0', color: '#4ade80' }}>
-                  📖 {activeExam.title} (Study List)
+                  📖 {activeExam.title} (Direct Read Study)
                 </h2>
                 <span style={{ fontSize: '11px', color: '#94a3b8' }}>
-                  Direct canonical sequence with answers
+                  Sabhi 4 options mein se sahi jawab green highlight hai
                 </span>
               </div>
               <button
@@ -838,43 +835,98 @@ export default function App() {
                   backgroundColor: '#0284c7',
                   color: '#fff',
                   border: 'none',
-                  padding: '6px 12px',
-                  borderRadius: '6px',
+                  padding: '8px 14px',
+                  borderRadius: '8px',
                   fontWeight: '700',
                   fontSize: '12px',
                   cursor: 'pointer'
                 }}
               >
-                Test 📝
+                Take MCQ Test 📝
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {/* Questions with all 4 Options */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {activeExam.questions.map((q, idx) => (
                 <div key={idx} style={{
                   backgroundColor: '#1e293b',
-                  padding: '14px',
-                  borderRadius: '10px',
+                  padding: '16px',
+                  borderRadius: '12px',
                   border: '1px solid #334155'
                 }}>
-                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#f8fafc', marginBottom: '6px' }}>
+                  {/* Question Title */}
+                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#f8fafc', marginBottom: '12px', lineHeight: '1.4' }}>
                     {idx + 1}. {q.q}
                   </div>
-                  <div style={{
-                    display: 'inline-block',
-                    backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                    color: '#4ade80',
-                    border: '1px solid #22c55e',
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    marginBottom: '6px'
-                  }}>
-                    Answer: {q.answer}
+
+                  {/* All 4 Options List */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                    {q.options.map((opt, oIdx) => {
+                      const isCorrect = opt === q.answer;
+                      return (
+                        <div
+                          key={oIdx}
+                          style={{
+                            padding: '10px 14px',
+                            borderRadius: '8px',
+                            border: isCorrect ? '2px solid #22c55e' : '1px solid #334155',
+                            backgroundColor: isCorrect ? 'rgba(34, 197, 94, 0.15)' : '#0f172a',
+                            color: isCorrect ? '#4ade80' : '#94a3b8',
+                            fontWeight: isCorrect ? '700' : '500',
+                            fontSize: '14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '10px'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: '22px',
+                              height: '22px',
+                              borderRadius: '50%',
+                              border: isCorrect ? '2px solid #22c55e' : '1px solid #475569',
+                              backgroundColor: isCorrect ? '#22c55e' : 'transparent',
+                              color: isCorrect ? '#0f172a' : '#64748b',
+                              fontSize: '11px',
+                              fontWeight: '800'
+                            }}>
+                              {String.fromCharCode(65 + oIdx)}
+                            </span>
+                            <span>{opt}</span>
+                          </div>
+                          {isCorrect && (
+                            <span style={{
+                              backgroundColor: '#22c55e',
+                              color: '#0f172a',
+                              fontSize: '11px',
+                              fontWeight: '800',
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              ✓ Correct Answer
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#94a3b8', lineHeight: '1.4' }}>
-                    📘 {q.explanation}
+
+                  {/* Explanation Context */}
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#94a3b8',
+                    backgroundColor: '#0f172a',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    lineHeight: '1.4'
+                  }}>
+                    💡 <strong style={{ color: '#e2e8f0' }}>Historical Context:</strong> {q.explanation}
                   </div>
                 </div>
               ))}
