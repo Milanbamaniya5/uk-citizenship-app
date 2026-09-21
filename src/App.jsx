@@ -79,7 +79,7 @@ const EXAM_SETS = [
 ];
 
 export default function App() {
-  const [view, setView] = useState('home'); // 'home', 'mcq_test', 'mcq_review', 'mcq_result', 'read', 'privacy', 'terms', 'about', 'contact'
+  const [view, setView] = useState('home'); 
   const [homeTab, setHomeTab] = useState('mcq');
   const [activeExam, setActiveExam] = useState(null);
   
@@ -659,7 +659,7 @@ export default function App() {
           </div>
         )}
 
-        {/* ================= MCQ RESULT & CERTIFICATE ================= */}
+        {/* ================= MCQ RESULT & OFFICIAL CERTIFICATE ================= */}
         {view === 'mcq_result' && (
           <div style={{ maxWidth: '650px', margin: '0 auto' }}>
             <div style={{
@@ -715,49 +715,61 @@ export default function App() {
               </div>
             </div>
 
-            {/* Milan Dhanji Certificate (Upon Passing) */}
+            {/* Official Life in the UK Practices Certificate (Issued by Platform) */}
             {isPassed && (
               <div style={{
                 backgroundColor: '#ffffff',
                 color: '#0f172a',
-                padding: '30px 18px',
+                padding: '34px 22px',
                 borderRadius: '12px',
                 border: '8px double #0284c7',
                 marginBottom: '24px',
-                textAlign: 'center'
+                textAlign: 'center',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+                position: 'relative'
               }}>
-                <div style={{ fontSize: '26px' }}>🇬🇧</div>
+                <div style={{ fontSize: '28px', marginBottom: '4px' }}>🇬🇧</div>
                 <div style={{ fontSize: '11px', letterSpacing: '2px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase' }}>
-                  British Citizenship Practice Accreditation
+                  Life in the UK Practices Accreditation
                 </div>
                 <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '10px 0', fontFamily: 'serif', color: '#0f172a' }}>
-                  Certificate of Competence
+                  Certificate of Practice Completion
                 </h1>
                 <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 10px 0' }}>
-                  This certifies that
+                  This official document confirms that
                 </p>
-                <div style={{ fontSize: '20px', fontWeight: '800', color: '#0369a1', borderBottom: '2px solid #e2e8f0', display: 'inline-block', paddingBottom: '4px' }}>
+                <div style={{ fontSize: '22px', fontWeight: '800', color: '#0369a1', borderBottom: '2px solid #cbd5e1', display: 'inline-block', paddingBottom: '4px', minWidth: '220px' }}>
                   {candidateName || 'Candidate'}
                 </div>
-                <p style={{ fontSize: '13px', color: '#334155', maxWidth: '420px', margin: '14px auto', lineHeight: '1.5' }}>
-                  has successfully passed <strong>{activeExam?.title}</strong> scoring <strong>{finalScore}/24 ({Math.round((finalScore / 24) * 100)}%)</strong>.
+                <p style={{ fontSize: '13px', color: '#334155', maxWidth: '440px', margin: '14px auto', lineHeight: '1.6' }}>
+                  has successfully completed the evaluation for <strong>{activeExam?.title}</strong> scoring <strong>{finalScore}/24 ({Math.round((finalScore / 24) * 100)}%)</strong> in accordance with the official curriculum standards.
                 </p>
 
-                <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '20px' }}>
+                {/* Issued by Life in the UK Practices Board */}
+                <div style={{ marginTop: '28px', display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'cursive', fontSize: '22px', color: '#0369a1', borderBottom: '1px solid #0f172a', padding: '0 14px 2px 14px' }}>
-                      Milan Dhanji
+                    <div style={{
+                      fontFamily: 'serif',
+                      fontWeight: '800',
+                      fontSize: '15px',
+                      color: '#0369a1',
+                      borderBottom: '1px solid #0f172a',
+                      padding: '0 10px 4px 10px',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Life in the UK Practices
                     </div>
                     <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px', fontWeight: '700' }}>
-                      Certified Digital Evaluator
+                      Assessment & Verification Board
                     </div>
                   </div>
+
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '12px', fontWeight: '700', borderBottom: '1px solid #0f172a', padding: '0 14px 6px 14px' }}>
                       {new Date().toLocaleDateString('en-GB')}
                     </div>
                     <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px', fontWeight: '700' }}>
-                      Issue Date
+                      Verification Date
                     </div>
                   </div>
                 </div>
@@ -1005,7 +1017,7 @@ export default function App() {
             </p>
             <h3 style={{ fontSize: '16px', color: '#f8fafc', marginTop: '16px', marginBottom: '8px' }}>3. Practice Certificates</h3>
             <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
-              Certificates generated on this portal signify educational revision completion under Milan Dhanji's evaluation criteria and do not substitute for official government test results.
+              Certificates generated on this portal signify educational revision completion under Life in the UK Practices evaluation standards and do not substitute for official government test results.
             </p>
           </div>
         )}
