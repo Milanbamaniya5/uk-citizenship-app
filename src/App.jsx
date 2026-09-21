@@ -186,23 +186,47 @@ export default function App() {
             <div style={{ fontSize: '11px', color: '#94a3b8' }}>lifeinukpractices.co.uk</div>
           </div>
         </div>
-        {view !== 'home' && (
-          <button
-            onClick={() => navigateTo('home')}
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <a
+            href="https://revolut.me/a_bariya30"
+            target="_blank"
+            rel="noreferrer"
             style={{
-              backgroundColor: '#334155',
-              color: '#f8fafc',
-              border: 'none',
+              backgroundColor: 'rgba(245, 158, 11, 0.15)',
+              color: '#fbbf24',
+              border: '1px solid #f59e0b',
               padding: '6px 12px',
-              borderRadius: '6px',
-              cursor: 'pointer',
+              borderRadius: '20px',
+              fontSize: '12px',
               fontWeight: '700',
-              fontSize: '12px'
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
             }}
           >
-            ← Home
-          </button>
-        )}
+            ☕ Support
+          </a>
+
+          {view !== 'home' && (
+            <button
+              onClick={() => navigateTo('home')}
+              style={{
+                backgroundColor: '#334155',
+                color: '#f8fafc',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '700',
+                fontSize: '12px'
+              }}
+            >
+              ← Home
+            </button>
+          )}
+        </div>
       </header>
 
       {/* Main Content Container */}
@@ -222,18 +246,35 @@ export default function App() {
               <h1 style={{ fontSize: '22px', fontWeight: '800', margin: '0 0 8px 0' }}>
                 Life in the UK Citizenship Preparation 2026
               </h1>
-              <p style={{ color: '#bae6fd', fontSize: '13px', margin: '0 0 12px 0' }}>
+              <p style={{ color: '#bae6fd', fontSize: '13px', margin: '0 0 14px 0' }}>
                 Free comprehensive practice tests based on the official 3rd edition handbook for Indefinite Leave to Remain (ILR) and British Citizenship.
               </p>
-              <div style={{
-                display: 'inline-block',
-                backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                padding: '4px 10px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: '600'
-              }}>
-                ✨ Pass Mark: 18 / 24 (75%)
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <span style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                  padding: '4px 10px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  fontWeight: '600'
+                }}>
+                  ✨ Pass Mark: 18 / 24 (75%)
+                </span>
+                <a
+                  href="https://revolut.me/a_bariya30"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    backgroundColor: '#f59e0b',
+                    color: '#0f172a',
+                    padding: '4px 12px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    textDecoration: 'none'
+                  }}
+                >
+                  ☕ Buy a Coffee (£3)
+                </a>
               </div>
             </div>
 
@@ -715,7 +756,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Official Life in the UK Practices Certificate (Issued by Platform) */}
+            {/* Official Life in the UK Practices Certificate */}
             {isPassed && (
               <div style={{
                 backgroundColor: '#ffffff',
@@ -725,8 +766,7 @@ export default function App() {
                 border: '8px double #0284c7',
                 marginBottom: '24px',
                 textAlign: 'center',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-                position: 'relative'
+                boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
               }}>
                 <div style={{ fontSize: '28px', marginBottom: '4px' }}>🇬🇧</div>
                 <div style={{ fontSize: '11px', letterSpacing: '2px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase' }}>
@@ -742,10 +782,10 @@ export default function App() {
                   {candidateName || 'Candidate'}
                 </div>
                 <p style={{ fontSize: '13px', color: '#334155', maxWidth: '440px', margin: '14px auto', lineHeight: '1.6' }}>
-                  has successfully completed the evaluation for <strong>{activeExam?.title}</strong> scoring <strong>{finalScore}/24 ({Math.round((finalScore / 24) * 100)}%)</strong> in accordance with the official curriculum standards.
+                  has successfully completed the evaluation for <strong>{activeExam?.title}</strong> scoring <strong>{finalScore}/24 ({Math.round((finalScore / 24) * 100)}%)</strong> in accordance with official curriculum standards.
                 </p>
 
-                {/* Issued by Life in the UK Practices Board */}
+                {/* Verification Authority */}
                 <div style={{ marginTop: '28px', display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{
@@ -776,37 +816,42 @@ export default function App() {
               </div>
             )}
 
-            {/* Platform Support Widget */}
+            {/* Revolut Support Widget (Instant Apple Pay / Card Transfer) */}
             <div style={{
               backgroundColor: '#1e293b',
-              padding: '16px',
+              padding: '20px 16px',
               borderRadius: '12px',
-              border: '1px solid #334155',
+              border: '1px solid #f59e0b',
               textAlign: 'center',
-              marginBottom: '20px'
+              marginBottom: '20px',
+              boxShadow: '0 4px 15px rgba(245, 158, 11, 0.15)'
             }}>
-              <div style={{ fontSize: '14px', fontWeight: '700', color: '#f8fafc', marginBottom: '6px' }}>
+              <div style={{ fontSize: '15px', fontWeight: '700', color: '#fbbf24', marginBottom: '6px' }}>
                 ☕ Found this practice helpful?
               </div>
-              <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 10px 0' }}>
-                Help us keep <strong>Life in the UK Test Practices</strong> 100% free and up-to-date for future applicants.
+              <p style={{ fontSize: '13px', color: '#cbd5e1', margin: '0 0 14px 0', lineHeight: '1.5' }}>
+                Help us keep <strong>Life in the UK Practices</strong> 100% free and up-to-date for upcoming applicants. You can send a small contribution via Apple Pay, Google Pay or Card.
               </p>
               <a
-                href="https://ko-fi.com"
+                href="https://revolut.me/a_bariya30"
                 target="_blank"
                 rel="noreferrer"
                 style={{
-                  display: 'inline-block',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
                   backgroundColor: '#f59e0b',
                   color: '#0f172a',
-                  padding: '8px 18px',
-                  borderRadius: '20px',
+                  padding: '10px 22px',
+                  borderRadius: '24px',
                   fontWeight: '800',
-                  fontSize: '12px',
-                  textDecoration: 'none'
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                  boxShadow: '0 2px 10px rgba(245, 158, 11, 0.4)'
                 }}
               >
-                Support Life in the UK Test Practices 💛
+                <span>☕ Buy a Coffee (£3) on Revolut</span>
+                <span>→</span>
               </a>
             </div>
 
