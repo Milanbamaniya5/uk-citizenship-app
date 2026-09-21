@@ -79,8 +79,8 @@ const EXAM_SETS = [
 ];
 
 export default function App() {
-  const [view, setView] = useState('home'); // 'home', 'mcq_test', 'mcq_review', 'mcq_result', 'read'
-  const [homeTab, setHomeTab] = useState('mcq'); // 'mcq' or 'read'
+  const [view, setView] = useState('home'); // 'home', 'mcq_test', 'mcq_review', 'mcq_result', 'read', 'privacy', 'terms', 'about', 'contact'
+  const [homeTab, setHomeTab] = useState('mcq');
   const [activeExam, setActiveExam] = useState(null);
   
   // MCQ state
@@ -89,7 +89,11 @@ export default function App() {
   const [userAnswers, setUserAnswers] = useState({});
   const [candidateName, setCandidateName] = useState('Candidate');
 
-  // Start MCQ Test with Fisher-Yates Shuffling
+  const navigateTo = (newView) => {
+    setView(newView);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const startMCQTest = (exam) => {
     setActiveExam(exam);
     const randomizedQuestions = shuffleArray(exam.questions).map(q => ({
@@ -99,15 +103,12 @@ export default function App() {
     setShuffledQuestions(randomizedQuestions);
     setUserAnswers({});
     setCurrentQIndex(0);
-    setView('mcq_test');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigateTo('mcq_test');
   };
 
-  // Start Direct Read mode (Strict canonical question order)
   const startDirectRead = (exam) => {
     setActiveExam(exam);
-    setView('read');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigateTo('read');
   };
 
   const handleSelectOption = (option) => {
@@ -122,8 +123,7 @@ export default function App() {
       setCurrentQIndex(currentQIndex + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      setView('mcq_review');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      navigateTo('mcq_review');
     }
   };
 
@@ -134,7 +134,6 @@ export default function App() {
     }
   };
 
-  // Calculate score
   const calculateScore = () => {
     let score = 0;
     shuffledQuestions.forEach((q, idx) => {
@@ -146,7 +145,7 @@ export default function App() {
   };
 
   const finalScore = activeExam ? calculateScore() : 0;
-  const isPassed = finalScore >= 18; // 75% of 24 is 18
+  const isPassed = finalScore >= 18;
 
   return (
     <div style={{
@@ -158,6 +157,9 @@ export default function App() {
       color: '#f8fafc',
       fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
       boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
       margin: 0,
       padding: 0
     }}>
@@ -172,18 +174,21 @@ export default function App() {
         width: '100%',
         boxSizing: 'border-box'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div 
+          onClick={() => navigateTo('home')} 
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+        >
           <span style={{ fontSize: '22px' }}>🇬🇧</span>
           <div>
             <div style={{ fontWeight: '800', fontSize: '16px', color: '#38bdf8' }}>
-              Life in UK Practice
+              Life in the UK Practice
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>Official 2026 Tests</div>
+            <div style={{ fontSize: '11px', color: '#94a3b8' }}>lifeinukpractices.co.uk</div>
           </div>
         </div>
         {view !== 'home' && (
           <button
-            onClick={() => setView('home')}
+            onClick={() => navigateTo('home')}
             style={{
               backgroundColor: '#334155',
               color: '#f8fafc',
@@ -200,8 +205,8 @@ export default function App() {
         )}
       </header>
 
-      {/* Main Content */}
-      <main style={{ maxWidth: '900px', margin: '0 auto', padding: '16px 14px', boxSizing: 'border-box' }}>
+      {/* Main Content Container */}
+      <main style={{ maxWidth: '900px', width: '100%', margin: '0 auto', padding: '16px 14px', boxSizing: 'border-box', flex: 1 }}>
         
         {/* ================= HOME VIEW ================= */}
         {view === 'home' && (
@@ -215,10 +220,10 @@ export default function App() {
               textAlign: 'center'
             }}>
               <h1 style={{ fontSize: '22px', fontWeight: '800', margin: '0 0 8px 0' }}>
-                Life in the UK Exam Preparation
+                Life in the UK Citizenship Preparation 2026
               </h1>
               <p style={{ color: '#bae6fd', fontSize: '13px', margin: '0 0 12px 0' }}>
-                Choose your study mode below to start practicing or reading the official questions.
+                Free comprehensive practice tests based on the official 3rd edition handbook for Indefinite Leave to Remain (ILR) and British Citizenship.
               </p>
               <div style={{
                 display: 'inline-block',
@@ -562,7 +567,7 @@ export default function App() {
                       key={idx}
                       onClick={() => {
                         setCurrentQIndex(idx);
-                        setView('mcq_test');
+                        navigateTo('mcq_test');
                       }}
                       style={{
                         padding: '10px 8px',
@@ -617,7 +622,7 @@ export default function App() {
                 <button
                   onClick={() => {
                     setCurrentQIndex(0);
-                    setView('mcq_test');
+                    navigateTo('mcq_test');
                   }}
                   style={{
                     flex: 1,
@@ -634,10 +639,7 @@ export default function App() {
                   ← Edit
                 </button>
                 <button
-                  onClick={() => {
-                    setView('mcq_result');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
+                  onClick={() => navigateTo('mcq_result')}
                   style={{
                     flex: 2,
                     padding: '12px',
@@ -696,7 +698,7 @@ export default function App() {
                   ↻ Retake
                 </button>
                 <button
-                  onClick={() => setView('home')}
+                  onClick={() => navigateTo('home')}
                   style={{
                     backgroundColor: '#334155',
                     color: '#fff',
@@ -762,6 +764,40 @@ export default function App() {
               </div>
             )}
 
+            {/* Platform Support Widget */}
+            <div style={{
+              backgroundColor: '#1e293b',
+              padding: '16px',
+              borderRadius: '12px',
+              border: '1px solid #334155',
+              textAlign: 'center',
+              marginBottom: '20px'
+            }}>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#f8fafc', marginBottom: '6px' }}>
+                ☕ Found this practice helpful?
+              </div>
+              <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 10px 0' }}>
+                Help us keep <strong>Life in the UK Test Practices</strong> 100% free and up-to-date for future applicants.
+              </p>
+              <a
+                href="https://ko-fi.com"
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: '#f59e0b',
+                  color: '#0f172a',
+                  padding: '8px 18px',
+                  borderRadius: '20px',
+                  fontWeight: '800',
+                  fontSize: '12px',
+                  textDecoration: 'none'
+                }}
+              >
+                Support Life in the UK Test Practices 💛
+              </a>
+            </div>
+
             {/* Review Answers */}
             <div style={{
               backgroundColor: '#1e293b',
@@ -805,10 +841,9 @@ export default function App() {
           </div>
         )}
 
-        {/* ================= DIRECT READ STUDY VIEW (ALL 4 OPTIONS + GREEN ANSWER) ================= */}
+        {/* ================= DIRECT READ STUDY VIEW ================= */}
         {view === 'read' && activeExam && (
           <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-            {/* Header */}
             <div style={{
               backgroundColor: '#1e293b',
               padding: '14px 16px',
@@ -846,7 +881,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* Questions with all 4 Options */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {activeExam.questions.map((q, idx) => (
                 <div key={idx} style={{
@@ -855,12 +889,10 @@ export default function App() {
                   borderRadius: '12px',
                   border: '1px solid #334155'
                 }}>
-                  {/* Question Title */}
                   <div style={{ fontSize: '15px', fontWeight: '700', color: '#f8fafc', marginBottom: '12px', lineHeight: '1.4' }}>
                     {idx + 1}. {q.q}
                   </div>
 
-                  {/* All 4 Options List */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
                     {q.options.map((opt, oIdx) => {
                       const isCorrect = opt === q.answer;
@@ -917,7 +949,6 @@ export default function App() {
                     })}
                   </div>
 
-                  {/* Explanation Context */}
                   <div style={{
                     fontSize: '12px',
                     color: '#94a3b8',
@@ -933,7 +964,145 @@ export default function App() {
             </div>
           </div>
         )}
+
+        {/* ================= PRIVACY POLICY ================= */}
+        {view === 'privacy' && (
+          <div style={{ maxWidth: '750px', margin: '0 auto', backgroundColor: '#1e293b', padding: '24px 20px', borderRadius: '12px', border: '1px solid #334155' }}>
+            <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#38bdf8', marginBottom: '14px' }}>
+              Privacy Policy
+            </h1>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              Last updated: September 2026. At <strong>lifeinukpractices.co.uk</strong>, we respect your privacy and are committed to protecting any information processed through our free educational mock test platform.
+            </p>
+            <h3 style={{ fontSize: '16px', color: '#f8fafc', marginTop: '16px', marginBottom: '8px' }}>1. Data Collection</h3>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              We do not require account registration or store sensitive personal information on remote databases. Any candidate name entered for generating the competence certificate is processed entirely client-side on your local device.
+            </p>
+            <h3 style={{ fontSize: '16px', color: '#f8fafc', marginTop: '16px', marginBottom: '8px' }}>2. Cookies & Advertising</h3>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              Third-party advertising vendors, including Google, may use cookies to serve ads based on prior visits to this website or other websites. You may opt out of personalized advertising by visiting Google Ads Settings.
+            </p>
+            <h3 style={{ fontSize: '16px', color: '#f8fafc', marginTop: '16px', marginBottom: '8px' }}>3. UK GDPR Compliance</h3>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              In accordance with UK Data Protection regulations, you have full rights to control cookie permissions and browse our educational resources anonymously.
+            </p>
+          </div>
+        )}
+
+        {/* ================= TERMS OF SERVICE ================= */}
+        {view === 'terms' && (
+          <div style={{ maxWidth: '750px', margin: '0 auto', backgroundColor: '#1e293b', padding: '24px 20px', borderRadius: '12px', border: '1px solid #334155' }}>
+            <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#38bdf8', marginBottom: '14px' }}>
+              Terms of Service & Disclaimer
+            </h1>
+            <h3 style={{ fontSize: '16px', color: '#f8fafc', marginTop: '16px', marginBottom: '8px' }}>1. Educational Practice Tool</h3>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              <strong>lifeinukpractices.co.uk</strong> is an independent digital study tool created for practice and educational revision purposes only.
+            </p>
+            <h3 style={{ fontSize: '16px', color: '#f8fafc', marginTop: '16px', marginBottom: '8px' }}>2. Official Affiliation Disclaimer</h3>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              This platform is NOT affiliated with, endorsed by, or officially connected with the UK Home Office or the UK Government. Official Life in the UK examinations must be booked directly via official government channels at gov.uk.
+            </p>
+            <h3 style={{ fontSize: '16px', color: '#f8fafc', marginTop: '16px', marginBottom: '8px' }}>3. Practice Certificates</h3>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              Certificates generated on this portal signify educational revision completion under Milan Dhanji's evaluation criteria and do not substitute for official government test results.
+            </p>
+          </div>
+        )}
+
+        {/* ================= ABOUT US ================= */}
+        {view === 'about' && (
+          <div style={{ maxWidth: '750px', margin: '0 auto', backgroundColor: '#1e293b', padding: '24px 20px', borderRadius: '12px', border: '1px solid #334155' }}>
+            <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#38bdf8', marginBottom: '14px' }}>
+              About Life in the UK Practice
+            </h1>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              Our mission is to help aspiring British citizens and residents preparing for Indefinite Leave to Remain (ILR) master the official Life in the UK curriculum with ease, confidence, and accuracy.
+            </p>
+            <h3 style={{ fontSize: '16px', color: '#f8fafc', marginTop: '16px', marginBottom: '8px' }}>Why Choose Us?</h3>
+            <ul style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.8', paddingLeft: '20px' }}>
+              <li><strong>17 Realistic Mock Tests:</strong> Curated based on the official 3rd edition handbook.</li>
+              <li><strong>Smart Shuffling:</strong> Dynamic randomization to test real understanding, not just memory position.</li>
+              <li><strong>Direct Read Mode:</strong> Rapid review list highlighting verified answers for fast memorization.</li>
+              <li><strong>100% Free & Mobile Friendly:</strong> Built for quick study sessions on the go.</li>
+            </ul>
+          </div>
+        )}
+
+        {/* ================= CONTACT US ================= */}
+        {view === 'contact' && (
+          <div style={{ maxWidth: '750px', margin: '0 auto', backgroundColor: '#1e293b', padding: '24px 20px', borderRadius: '12px', border: '1px solid #334155' }}>
+            <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#38bdf8', marginBottom: '14px' }}>
+              Contact & Feedback
+            </h1>
+            <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+              Have questions, feedback, or suggestions about our questions and study materials? We would love to hear from you.
+            </p>
+            <div style={{
+              backgroundColor: '#0f172a',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid #334155',
+              marginTop: '16px'
+            }}>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#38bdf8', marginBottom: '6px' }}>
+                Support & Inquiries:
+              </div>
+              <div style={{ fontSize: '13px', color: '#f8fafc' }}>
+                📧 Email: <strong>support@lifeinukpractices.co.uk</strong>
+              </div>
+              <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px' }}>
+                We typically respond within 24 to 48 hours.
+              </div>
+            </div>
+          </div>
+        )}
+
       </main>
+
+      {/* ================= FOOTER ================= */}
+      <footer style={{
+        backgroundColor: '#0b1120',
+        borderTop: '1px solid #1e293b',
+        padding: '24px 16px',
+        textAlign: 'center',
+        marginTop: '32px'
+      }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '14px' }}>
+            <button
+              onClick={() => navigateTo('about')}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              About Us
+            </button>
+            <button
+              onClick={() => navigateTo('privacy')}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => navigateTo('terms')}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              Terms & Disclaimer
+            </button>
+            <button
+              onClick={() => navigateTo('contact')}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              Contact
+            </button>
+          </div>
+
+          <div style={{ fontSize: '11px', color: '#64748b', lineHeight: '1.5' }}>
+            © {new Date().getFullYear()} lifeinukpractices.co.uk. Independent educational tool based on the official 3rd edition handbook.
+            <br />
+            Not affiliated with the UK Home Office or Gov.uk.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
