@@ -93,6 +93,10 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleLogoClick = () => {
+    window.location.reload(); // Yeh page ko refresh kar dega aur home par le aayega
+  };
+
   const startMCQTest = (exam) => {
     setActiveExam(exam);
     const randomizedQuestions = shuffleArray(exam.questions).map(q => ({
@@ -162,7 +166,7 @@ export default function App() {
       margin: 0,
       padding: 0
     }}>
-      {/* Top Header - Fixed Clickable Logo */}
+      {/* Top Header - Refresh & Home on Logo Click */}
       <header style={{
         backgroundColor: '#1e293b',
         borderBottom: '1px solid #334155',
@@ -174,7 +178,7 @@ export default function App() {
         boxSizing: 'border-box'
       }}>
         <div 
-          onClick={() => navigateTo('home')} 
+          onClick={handleLogoClick} 
           style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none' }}
         >
           <span style={{ fontSize: '22px' }}>🇬🇧</span>
