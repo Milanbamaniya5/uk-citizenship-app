@@ -162,7 +162,7 @@ export default function App() {
       margin: 0,
       padding: 0
     }}>
-      {/* Top Header */}
+      {/* Top Header - Fixed Clickable Logo */}
       <header style={{
         backgroundColor: '#1e293b',
         borderBottom: '1px solid #334155',
@@ -175,7 +175,7 @@ export default function App() {
       }}>
         <div 
           onClick={() => navigateTo('home')} 
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none' }}
         >
           <span style={{ fontSize: '22px' }}>🇬🇧</span>
           <div>
